@@ -6,43 +6,65 @@ import XCTest
 final class RestaurantDomainTests: XCTestCase {
 
 	func testInitializerRestaurantLoaderAndValidateURLRequest() throws {
-		let requestURL = try XCTUnwrap(URL(string: "https://comintando.com.br"))
-		let client = NetworkClientSpy()
-
-		let sut = RemoteRestaurantLoader(url: requestURL, networkClient: client)
+		let (sut, client, requestURL) = try makeSUT()
 		
 		sut.load { _ in }
 
 		XCTAssertEqual([requestURL], client.urlRequests)
 	}
 
-	func testRestaurantRequestWithError() throws {
-		let requestURL = try XCTUnwrap(URL(string: "https://comintando.com.br"))
-		let client = NetworkClientSpy()
+	func testRestaurantRequestWithConectivityError() throws {
+		let (sut, client, requestURL) = try makeSUT()
 
 		let expect = XCTestExpectation(description: "request expectation")
-		var returnedError: Error?
+		var returnedState: RemoteRestaurantLoader.Error?
 
-		let sut = RemoteRestaurantLoader(url: requestURL, networkClient: client)
 
-		sut.load { error in
-			returnedError = error
+		sut.load { state in
+			returnedState = state
 			expect.fulfill()
 		}
 
 		wait(for: [expect], timeout: 1)
 
 		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertNotNil(returnedError)
+		XCTAssertEqual(returnedState, .connectivity)
+	}
+
+	func testRestaurantRequestWithInvalidData() throws {
+		let (sut, client, requestURL) = try makeSUT()
+
+		let expect = XCTestExpectation(description: "request expectation")
+		var returnedState: RemoteRestaurantLoader.Error?
+
+		client.stateHandler = .success
+		sut.load { state in
+			returnedState = state
+			expect.fulfill()
+		}
+
+		wait(for: [expect], timeout: 1)
+
+		XCTAssertEqual([requestURL], client.urlRequests)
+		XCTAssertEqual(returnedState, .invalidData)
+	}
+
+	private func makeSUT() throws -> (sut: RemoteRestaurantLoader, client: NetworkClientSpy, requestURL: URL) {
+		let requestURL = try XCTUnwrap(URL(string: "https://comintando.com.br"))
+		let client = NetworkClientSpy()
+		let sut = RemoteRestaurantLoader(url: requestURL, networkClient: client)
+
+		return (sut, client, requestURL)
 	}
 }
 
 final class NetworkClientSpy: NetworkClient {
 	private(set) var urlRequests: [URL] = []
+	var stateHandler: NetworkState?
 
-	func request(from url: URL, completion: @escaping (Error) -> Void) {
+	func request(from url: URL, completion: @escaping (NetworkState) -> Void) {
 		urlRequests.append(url)
-		completion(anyError())
+		completion(stateHandler ?? .error(anyError()))
 	}
 
 	private func anyError() -> Error {
