@@ -12,19 +12,19 @@ struct RestaurantItem {
 }
 
 protocol NetworkClient {
-	typealias NetworkState = Result<(Data, HTTPURLResponse), Error>
-	func request(from url: URL, completion: @escaping (NetworkState) -> Void)
+	typealias NetworkResult = Result<(Data, HTTPURLResponse), Error>
+	func request(from url: URL, completion: @escaping (NetworkResult) -> Void)
 }
 
 final class RemoteRestaurantLoader {
 	let url: URL
 	let network: NetworkClient
-	
+
 	enum Error: Swift.Error {
 		case connectivity
 		case invalidData
 	}
-	
+
 	init(url: URL, networkClient: NetworkClient) {
 		self.url = url
 		self.network = networkClient

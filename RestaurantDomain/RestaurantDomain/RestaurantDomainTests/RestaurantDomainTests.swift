@@ -60,9 +60,9 @@ final class RestaurantDomainTests: XCTestCase {
 
 final class NetworkClientSpy: NetworkClient {
 	private(set) var urlRequests: [URL] = []
-	var stateHandler: NetworkState?
+	var stateHandler: NetworkResult?
 
-	func request(from url: URL, completion: @escaping (NetworkState) -> Void) {
+	func request(from url: URL, completion: @escaping (NetworkResult) -> Void) {
 		urlRequests.append(url)
 		completion(stateHandler ?? .failure(anyError()))
 	}
