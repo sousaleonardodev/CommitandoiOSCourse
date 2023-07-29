@@ -37,7 +37,7 @@ final class RestaurantDomainTests: XCTestCase {
 		let expect = XCTestExpectation(description: "request expectation")
 		var returnedState: RemoteRestaurantLoader.Error?
 
-		client.stateHandler = .success
+		client.stateHandler = .success((Data(), HTTPURLResponse()))
 		sut.load { state in
 			returnedState = state
 			expect.fulfill()
@@ -64,7 +64,7 @@ final class NetworkClientSpy: NetworkClient {
 
 	func request(from url: URL, completion: @escaping (NetworkState) -> Void) {
 		urlRequests.append(url)
-		completion(stateHandler ?? .error(anyError()))
+		completion(stateHandler ?? .failure(anyError()))
 	}
 
 	private func anyError() -> Error {
