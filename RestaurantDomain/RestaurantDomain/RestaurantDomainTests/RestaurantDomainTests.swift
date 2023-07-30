@@ -17,7 +17,7 @@ final class RestaurantDomainTests: XCTestCase {
 		let (sut, client, requestURL) = try makeSUT()
 
 		let expect = XCTestExpectation(description: "request expectation")
-		var returnedState: RemoteRestaurantLoader.Error?
+		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
 
 
 		sut.load { state in
@@ -28,14 +28,14 @@ final class RestaurantDomainTests: XCTestCase {
 		wait(for: [expect], timeout: 1)
 
 		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertEqual(returnedState, .connectivity)
+		XCTAssertEqual(returnedState, .failure(.connectivity))
 	}
 
 	func testRestaurantRequestWithInvalidData() throws {
 		let (sut, client, requestURL) = try makeSUT()
 
 		let expect = XCTestExpectation(description: "request expectation")
-		var returnedState: RemoteRestaurantLoader.Error?
+		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
 
 		client.stateHandler = .success((Data(), HTTPURLResponse()))
 		sut.load { state in
@@ -46,7 +46,25 @@ final class RestaurantDomainTests: XCTestCase {
 		wait(for: [expect], timeout: 1)
 
 		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertEqual(returnedState, .invalidData)
+		XCTAssertEqual(returnedState, .failure(.invalidData))
+	}
+
+	func testRestaurantRequestWithSuccessEmptyList() throws {
+		let (sut, client, requestURL) = try makeSUT()
+
+		let expect = XCTestExpectation(description: "request expectation")
+		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
+
+		client.stateHandler = .success((emptyListData(), HTTPURLResponse()))
+		sut.load { state in
+			returnedState = state
+			expect.fulfill()
+		}
+
+		wait(for: [expect], timeout: 1)
+
+		XCTAssertEqual([requestURL], client.urlRequests)
+		XCTAssertEqual(returnedState, .success([]))
 	}
 
 	private func makeSUT() throws -> (sut: RemoteRestaurantLoader, client: NetworkClientSpy, requestURL: URL) {
@@ -55,6 +73,10 @@ final class RestaurantDomainTests: XCTestCase {
 		let sut = RemoteRestaurantLoader(url: requestURL, networkClient: client)
 
 		return (sut, client, requestURL)
+	}
+
+	private func emptyListData() -> Data {
+		Data("{ \"items\": [] }".utf8)
 	}
 }
 
