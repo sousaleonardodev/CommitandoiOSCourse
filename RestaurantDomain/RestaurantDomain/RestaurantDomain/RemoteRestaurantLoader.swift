@@ -23,6 +23,7 @@ protocol NetworkClient {
 final class RemoteRestaurantLoader {
 	let url: URL
 	let network: NetworkClient
+	private let okResponse = 200
 
 	enum Error: Swift.Error {
 		case connectivity
@@ -36,10 +37,10 @@ final class RemoteRestaurantLoader {
 
 	typealias RemoterestaurantResult = Result<[RestaurantItem], RemoteRestaurantLoader.Error>
 	func load(completion: @escaping (RemoterestaurantResult) -> Void) {
-		network.request(from: url) { result in
+		network.request(from: url) { [okResponse] result in
 			switch result {
-			case let .success(data, response):
-				guard let json = try? JSONDecoder().decode(RestaurantRoot.self, from: data) else {
+			case let .success((data, response)):
+				guard let json = try? JSONDecoder().decode(RestaurantRoot.self, from: data), response.statusCode == okResponse else {
 					completion(.failure(.invalidData))
 					return
 				}

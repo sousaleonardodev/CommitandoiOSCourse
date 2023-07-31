@@ -37,7 +37,7 @@ final class RestaurantDomainTests: XCTestCase {
 		let expect = XCTestExpectation(description: "request expectation")
 		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
 
-		client.stateHandler = .success((Data(), HTTPURLResponse()))
+		try client.setupSuccessHandler()
 		sut.load { state in
 			returnedState = state
 			expect.fulfill()
@@ -55,7 +55,8 @@ final class RestaurantDomainTests: XCTestCase {
 		let expect = XCTestExpectation(description: "request expectation")
 		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
 
-		client.stateHandler = .success((emptyListData(), HTTPURLResponse()))
+		try client.setupSuccessHandler(data: emptyListData())
+
 		sut.load { state in
 			returnedState = state
 			expect.fulfill()
@@ -78,7 +79,7 @@ final class RestaurantDomainTests: XCTestCase {
 		let rootJSON = ["items": [json]]
 		let returnData = try XCTUnwrap(JSONSerialization.data(withJSONObject: rootJSON))
 
-		client.stateHandler = .success((returnData, HTTPURLResponse()))
+		try client.setupSuccessHandler(data: returnData)
 
 		sut.load { state in
 			returnedState = state
@@ -135,14 +136,25 @@ final class RestaurantDomainTests: XCTestCase {
 
 final class NetworkClientSpy: NetworkClient {
 	private(set) var urlRequests: [URL] = []
-	var stateHandler: NetworkResult?
+	private var stateHandler: NetworkResult?
 
 	func request(from url: URL, completion: @escaping (NetworkResult) -> Void) {
 		urlRequests.append(url)
-		completion(stateHandler ?? .failure(anyError()))
+		completion(stateHandler ?? .failure(NetworkClientSpy.anyError()))
 	}
 
-	private func anyError() -> Error {
+	func setupSuccessHandler(statusCode: Int = 200, data: Data = Data()) throws {
+		let url = try XCTUnwrap(URL(string: "https://comitando.com"))
+		let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil))
+
+		stateHandler = .success((data, response))
+	}
+
+	func setupFailureHandler(error: Error = NetworkClientSpy.anyError()) {
+		stateHandler = .failure(error)
+	}
+
+	static private func anyError() -> Error {
 		NSError(domain: "Any error", code: -1)
 	}
 }
