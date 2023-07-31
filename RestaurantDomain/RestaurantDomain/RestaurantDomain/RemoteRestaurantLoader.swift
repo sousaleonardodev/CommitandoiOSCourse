@@ -37,7 +37,13 @@ final class RemoteRestaurantLoader {
 
 	typealias RemoterestaurantResult = Result<[RestaurantItem], RemoteRestaurantLoader.Error>
 	func load(completion: @escaping (RemoterestaurantResult) -> Void) {
-		network.request(from: url) { [okResponse] result in
+		let okResponse = okResponse
+		
+		network.request(from: url) { [weak self] result in
+			guard let _ = self else {
+				return
+			}
+
 			switch result {
 			case let .success((data, response)):
 				guard let json = try? JSONDecoder().decode(RestaurantRoot.self, from: data), response.statusCode == okResponse else {

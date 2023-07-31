@@ -25,6 +25,8 @@ final class RestaurantDomainTests: XCTestCase {
 			expect.fulfill()
 		}
 
+		try client.setupFailureCompletion()
+		
 		wait(for: [expect], timeout: 1)
 
 		XCTAssertEqual([requestURL], client.urlRequests)
@@ -37,12 +39,12 @@ final class RestaurantDomainTests: XCTestCase {
 		let expect = XCTestExpectation(description: "request expectation")
 		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
 
-		try client.setupSuccessHandler()
 		sut.load { state in
 			returnedState = state
 			expect.fulfill()
 		}
 
+		try client.setupSuccessCompletion()
 		wait(for: [expect], timeout: 1)
 
 		XCTAssertEqual([requestURL], client.urlRequests)
@@ -55,12 +57,12 @@ final class RestaurantDomainTests: XCTestCase {
 		let expect = XCTestExpectation(description: "request expectation")
 		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
 
-		try client.setupSuccessHandler(data: emptyListData())
-
 		sut.load { state in
 			returnedState = state
 			expect.fulfill()
 		}
+
+		try client.setupSuccessCompletion(data: emptyListData())
 
 		wait(for: [expect], timeout: 1)
 
@@ -79,12 +81,12 @@ final class RestaurantDomainTests: XCTestCase {
 		let rootJSON = ["items": [json]]
 		let returnData = try XCTUnwrap(JSONSerialization.data(withJSONObject: rootJSON))
 
-		try client.setupSuccessHandler(data: returnData)
-
 		sut.load { state in
 			returnedState = state
 			expect.fulfill()
 		}
+
+		try client.setupSuccessCompletion(data: returnData)
 
 		wait(for: [expect], timeout: 1)
 
@@ -92,10 +94,35 @@ final class RestaurantDomainTests: XCTestCase {
 		XCTAssertEqual(returnedState, .success([model]))
 	}
 
-	private func makeSUT() throws -> (sut: RemoteRestaurantLoader, client: NetworkClientSpy, requestURL: URL) {
+	func testLoadNotReturnedAdterSUTDealloc() throws {
+		let anyURL = try XCTUnwrap(URL(string: "hhttps://commitando.com.br"))
+		let client = NetworkClientSpy()
+		var sut: RemoteRestaurantLoader? = RemoteRestaurantLoader(url: anyURL, networkClient: client)
+
+		var returnedResult: RemoteRestaurantLoader.RemoterestaurantResult?
+		sut?.load(completion: { result in
+			returnedResult = result
+		})
+
+		sut = nil
+		try client.setupSuccessCompletion()
+
+		XCTAssertNil(returnedResult)
+	}
+
+	func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+		addTeardownBlock { [weak instance] in
+			XCTAssertNil(instance, "The instance should be dealloced. Possible Memory leak.", file: file, line: line)
+		}
+	}
+
+	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> (sut: RemoteRestaurantLoader, client: NetworkClientSpy, requestURL: URL) {
 		let requestURL = try XCTUnwrap(URL(string: "https://comintando.com.br"))
 		let client = NetworkClientSpy()
 		let sut = RemoteRestaurantLoader(url: requestURL, networkClient: client)
+
+		trackForMemoryLeaks(client, file: file, line: line)
+		trackForMemoryLeaks(sut, file: file, line: line)
 
 		return (sut, client, requestURL)
 	}
@@ -136,22 +163,21 @@ final class RestaurantDomainTests: XCTestCase {
 
 final class NetworkClientSpy: NetworkClient {
 	private(set) var urlRequests: [URL] = []
-	private var stateHandler: NetworkResult?
+	private var completionHandler: ((NetworkResult) -> Void)?
 
 	func request(from url: URL, completion: @escaping (NetworkResult) -> Void) {
 		urlRequests.append(url)
-		completion(stateHandler ?? .failure(NetworkClientSpy.anyError()))
+		completionHandler = completion
 	}
 
-	func setupSuccessHandler(statusCode: Int = 200, data: Data = Data()) throws {
-		let url = try XCTUnwrap(URL(string: "https://comitando.com"))
-		let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil))
+	func setupSuccessCompletion(statusCode: Int = 200, data: Data = Data()) throws {
+		let response = try XCTUnwrap(HTTPURLResponse(url: urlRequests[0], statusCode: statusCode, httpVersion: nil, headerFields: nil))
 
-		stateHandler = .success((data, response))
+		completionHandler?(.success((data, response)))
 	}
 
-	func setupFailureHandler(error: Error = NetworkClientSpy.anyError()) {
-		stateHandler = .failure(error)
+	func setupFailureCompletion(error: Error = NetworkClientSpy.anyError()) {
+		completionHandler?(.failure(error))
 	}
 
 	static private func anyError() -> Error {
