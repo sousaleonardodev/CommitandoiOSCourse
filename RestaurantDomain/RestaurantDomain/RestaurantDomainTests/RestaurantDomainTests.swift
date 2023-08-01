@@ -14,84 +14,50 @@ final class RestaurantDomainTests: XCTestCase {
 	}
 
 	func testRestaurantRequestWithConectivityError() throws {
-		let (sut, client, requestURL) = try makeSUT()
+		let (sut, client, _) = try makeSUT()
 
-		let expect = XCTestExpectation(description: "request expectation")
-		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
-
-
-		sut.load { state in
-			returnedState = state
-			expect.fulfill()
+		try assert(sut, completion: .failure(.connectivity)) {
+			client.setupFailureCompletion()
 		}
-
-		try client.setupFailureCompletion()
-		
-		wait(for: [expect], timeout: 1)
-
-		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertEqual(returnedState, .failure(.connectivity))
 	}
 
 	func testRestaurantRequestWithInvalidData() throws {
-		let (sut, client, requestURL) = try makeSUT()
+		let (sut, client, _) = try makeSUT()
 
-		let expect = XCTestExpectation(description: "request expectation")
-		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
-
-		sut.load { state in
-			returnedState = state
-			expect.fulfill()
+		try assert(sut, completion: .failure(.invalidData)) {
+			try client.setupSuccessCompletion()
 		}
-
-		try client.setupSuccessCompletion()
-		wait(for: [expect], timeout: 1)
-
-		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertEqual(returnedState, .failure(.invalidData))
 	}
 
 	func testRestaurantRequestWithSuccessEmptyList() throws {
-		let (sut, client, requestURL) = try makeSUT()
+		let (sut, client, _) = try makeSUT()
 
-		let expect = XCTestExpectation(description: "request expectation")
-		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
-
-		sut.load { state in
-			returnedState = state
-			expect.fulfill()
+		try assert(sut, completion: .success([RestaurantItem]())) {
+			try client.setupSuccessCompletion(data: emptyListData())
 		}
-
-		try client.setupSuccessCompletion(data: emptyListData())
-
-		wait(for: [expect], timeout: 1)
-
-		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertEqual(returnedState, .success([]))
 	}
 
 	func testRestaurantRequestWithSuccessRestaurantList() throws {
-		let (sut, client, requestURL) = try makeSUT()
-
-		let expect = XCTestExpectation(description: "request expectation")
-		var returnedState: RemoteRestaurantLoader.RemoterestaurantResult?
+		let (sut, client, _) = try makeSUT()
 
 		let (model, json) = makeItem()
-
 		let rootJSON = ["items": [json]]
 		let returnData = try XCTUnwrap(JSONSerialization.data(withJSONObject: rootJSON))
 
-		sut.load { state in
-			returnedState = state
-			expect.fulfill()
+		try assert(sut, completion: .success([model])) {
+			try client.setupSuccessCompletion(data: returnData)
 		}
+	}
 
-		try client.setupSuccessCompletion(data: returnData)
+	func testRestaurantRequestWithSuccessWithInvalidStatusCode() throws {
+		let (sut, client, _) = try makeSUT()
 
-		wait(for: [expect], timeout: 1)
-
-		XCTAssertEqual([requestURL], client.urlRequests)
-		XCTAssertEqual(returnedState, .success([model]))
+		try assert(sut, completion: .failure(.invalidData)) {
+			let (_, json) = makeItem()
+			let rootJSON = ["items": [json]]
+			let returnData = try XCTUnwrap(JSONSerialization.data(withJSONObject: rootJSON))
+			try client.setupSuccessCompletion(statusCode: 201, data: returnData)
+		}
 	}
 
 	func testLoadNotReturnedAdterSUTDealloc() throws {
@@ -110,7 +76,29 @@ final class RestaurantDomainTests: XCTestCase {
 		XCTAssertNil(returnedResult)
 	}
 
-	func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+	private func assert(
+		_ sut: RemoteRestaurantLoader,
+		completion result: RemoteRestaurantLoader.RemoterestaurantResult?,
+		when action: () throws -> Void,
+		file: StaticString = #filePath,
+		line: UInt = #line
+	) throws {
+		let expect = XCTestExpectation(description: "request expectation")
+		var returnedResult: RemoteRestaurantLoader.RemoterestaurantResult?
+
+		sut.load { state in
+			returnedResult = state
+			expect.fulfill()
+		}
+
+		try action()
+
+		wait(for: [expect], timeout: 1)
+
+		XCTAssertEqual(returnedResult, result, file: file, line: line)
+	}
+
+	private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
 		addTeardownBlock { [weak instance] in
 			XCTAssertNil(instance, "The instance should be dealloced. Possible Memory leak.", file: file, line: line)
 		}

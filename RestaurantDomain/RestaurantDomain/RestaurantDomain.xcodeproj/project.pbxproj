@@ -31,6 +31,7 @@
 		FA9FD41A2A718A87000921BA /* RestaurantDomainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RestaurantDomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDomainTests.swift; sourceTree = "<group>"; };
 		FA9FD42A2A718D5E000921BA /* RemoteRestaurantLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRestaurantLoader.swift; sourceTree = "<group>"; };
+		FAA003642A78669F004D2911 /* RestaurantDomain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = RestaurantDomain.xctestplan; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +84,7 @@
 		FA9FD41E2A718A87000921BA /* RestaurantDomainTests */ = {
 			isa = PBXGroup;
 			children = (
+				FAA003642A78669F004D2911 /* RestaurantDomain.xctestplan */,
 				FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */,
 			);
 			path = RestaurantDomainTests;
@@ -365,6 +367,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.sousaleonardo.RestaurantDomain;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -395,6 +400,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.sousaleonardo.RestaurantDomain;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};

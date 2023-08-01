@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "E224F1B4-9E95-4302-A447-9C8F7E9348E1",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:RestaurantDomain.xcodeproj",
+          "identifier" : "FA9FD40F2A718A87000921BA",
+          "name" : "RestaurantDomain"
+        }
+      ]
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:RestaurantDomain.xcodeproj",
+        "identifier" : "FA9FD4192A718A87000921BA",
+        "name" : "RestaurantDomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}
