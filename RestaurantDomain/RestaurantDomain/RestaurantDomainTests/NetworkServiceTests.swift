@@ -81,15 +81,24 @@ final class NetworkServiceTests: XCTestCase {
 
 		XCTAssertNotNil(resultErrorForInvalidCases(data: data, response: urlResponse, error: anyError))
 		XCTAssertNotNil(resultErrorForInvalidCases(data: data, response: httpResponse, error: anyError))
-		XCTAssertNotNil(resultErrorForInvalidCases(data: nil, response: nil, error: anyError))
+
+		let validResult = resultErrorForInvalidCases(data: nil, response: nil, error: anyError)
+		XCTAssertNotNil(validResult)
+		XCTAssertEqual(validResult as? NSError, anyError)
 	}
 
 	func testLoadRequestWithSuccessForValidCases() {
 		let url = URL(string: "https://commitando.com.br")!
 		let data = Data()
-		let httpResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+		let okResponse = Int(200)
+		let httpResponse = HTTPURLResponse(url: url, statusCode: okResponse, httpVersion: nil, headerFields: nil)
 
-		XCTAssertNotNil(resultSuccessForValidCases(data: data, response: httpResponse, error: nil))
+		let result = resultSuccessForValidCases(data: data, response: httpResponse, error: nil)
+		XCTAssertNotNil(result)
+
+		XCTAssertEqual(result?.data, data)
+		XCTAssertEqual(result?.response.url, url)
+		XCTAssertEqual(result?.response.statusCode, okResponse)
 	}
 
 	private func makeSUT(
