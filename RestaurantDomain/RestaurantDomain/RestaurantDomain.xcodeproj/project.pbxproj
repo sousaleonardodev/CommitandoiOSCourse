@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA7EA66E2A802D5400C531EC /* XCTestCase+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */; };
 		FA9FD4152A718A87000921BA /* RestaurantDomain.docc in Sources */ = {isa = PBXBuildFile; fileRef = FA9FD4142A718A87000921BA /* RestaurantDomain.docc */; };
 		FA9FD41B2A718A87000921BA /* RestaurantDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9FD4102A718A87000921BA /* RestaurantDomain.framework */; };
 		FA9FD4202A718A87000921BA /* RestaurantDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Extensions.swift"; sourceTree = "<group>"; };
 		FA9FD4102A718A87000921BA /* RestaurantDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RestaurantDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA9FD4132A718A87000921BA /* RestaurantDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RestaurantDomain.h; sourceTree = "<group>"; };
 		FA9FD4142A718A87000921BA /* RestaurantDomain.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = RestaurantDomain.docc; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */,
 				FAFEEE292A796E39001D6E10 /* NetworkClientSpy.swift */,
 				FADC3CC82A7F178900D16DE2 /* NetworkServiceTests.swift */,
+				FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */,
 			);
 			path = RestaurantDomainTests;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA7EA66E2A802D5400C531EC /* XCTestCase+Extensions.swift in Sources */,
 				FAFEEE2A2A796E39001D6E10 /* NetworkClientSpy.swift in Sources */,
 				FADC3CC92A7F178900D16DE2 /* NetworkServiceTests.swift in Sources */,
 				FA9FD4202A718A87000921BA /* RestaurantDomainTests.swift in Sources */,
