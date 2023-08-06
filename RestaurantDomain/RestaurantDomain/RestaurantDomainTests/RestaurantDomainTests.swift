@@ -4,7 +4,6 @@ import XCTest
 import RestaurantDomain
 
 final class RestaurantDomainTests: XCTestCase {
-
 	func testInitializerRestaurantLoaderAndValidateURLRequest() throws {
 		let (sut, client, requestURL) = try makeSUT()
 		
@@ -96,12 +95,6 @@ final class RestaurantDomainTests: XCTestCase {
 		wait(for: [expect], timeout: 1)
 
 		XCTAssertEqual(returnedResult, result, file: file, line: line)
-	}
-
-	private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
-		addTeardownBlock { [weak instance] in
-			XCTAssertNil(instance, "The instance should be dealloced. Possible Memory leak.", file: file, line: line)
-		}
 	}
 
 	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> (sut: RemoteRestaurantLoader, client: NetworkClientSpy, requestURL: URL) {
