@@ -8,7 +8,6 @@ final class NetworkServiceTests: XCTestCase {
 	func testRequestAndCreateDataTaskWithURLAndResume() {
 		let (sut, session, task) = makeSUT()
 		let url = URL(string: "https://comitando.com.br")!
-
 		session.stub(url: url, task: task)
 
 		sut.request(from: url) { _ in }
@@ -19,10 +18,9 @@ final class NetworkServiceTests: XCTestCase {
 	func testLoadRequestWithError() {
 		let (sut, session, task) = makeSUT()
 		let url = URL(string: "https://comitando.com.br")!
-
+		let expectation = XCTestExpectation(description: "reqeust return")
 		let error = NSError(domain: "error", code: -1)
 		session.stub(url: url, task: task, error: error)
-		let expectation = XCTestExpectation(description: "reqeust return")
 
 		sut.request(from: url) { result in
 			switch result {
@@ -42,10 +40,8 @@ final class NetworkServiceTests: XCTestCase {
 		let url = URL(string: "https://comitando.com.br")!
 		let data = Data()
 		let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
-
-		session.stub(url: url, task: task, data: data, response: response)
-
 		let expectation = XCTestExpectation(description: "reqeust return")
+		session.stub(url: url, task: task, data: data, response: response)
 
 		sut.request(from: url) { result in
 			switch result {
@@ -92,10 +88,9 @@ final class NetworkServiceTests: XCTestCase {
 		let data = Data()
 		let okResponse = Int(200)
 		let httpResponse = HTTPURLResponse(url: url, statusCode: okResponse, httpVersion: nil, headerFields: nil)
-
 		let result = resultSuccessForValidCases(data: data, response: httpResponse, error: nil)
-		XCTAssertNotNil(result)
 
+		XCTAssertNotNil(result)
 		XCTAssertEqual(result?.data, data)
 		XCTAssertEqual(result?.response.url, url)
 		XCTAssertEqual(result?.response.statusCode, okResponse)
@@ -173,58 +168,5 @@ final class NetworkServiceTests: XCTestCase {
 
 		wait(for: [expectation], timeout: CGFloat(1))
 		return returnedResut
-	}
-}
-
-final class URLSessionSpy: URLSession {
-	struct Stub {
-		let task: URLSessionDataTask
-		let data: Data?
-		let response: URLResponse?
-		let error: Error?
-
-		init(
-			task: URLSessionDataTask,
-			error: Error? = nil,
-			data: Data? = nil,
-			response: URLResponse? = nil)
-		{
-			self.task = task
-			self.error = error
-			self.data = data
-			self.response = response
-		}
-	}
-
-	private(set) var stubs: [URL: Stub] = [:]
-
-	override func dataTask(
-		with url: URL,
-		completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
-	) -> URLSessionDataTask {
-		guard let stub = stubs[url] else {
-			return URLSessionDataTaskSpy()
-		}
-
-		completionHandler(stub.data, stub.response, stub.error)
-		return stub.task
-	}
-
-	func stub(
-		url: URL,
-		task: URLSessionDataTask,
-		error: Error? = nil,
-		data: Data? = nil,
-		response: URLResponse? = nil
-	) {
-		stubs[url] = Stub(task: task, error: error, data: data, response: response)
-	}
-}
-
-final class URLSessionDataTaskSpy: URLSessionDataTask {
-	private(set) var resumeCount = 0
-
-	override func resume() {
-		resumeCount += 1
 	}
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA36A8B52A8039BF00912F2B /* URLSessionSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA36A8B42A8039BF00912F2B /* URLSessionSpy.swift */; };
+		FA36A8B72A8039EE00912F2B /* URLSessionDataTaskSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA36A8B62A8039EE00912F2B /* URLSessionDataTaskSpy.swift */; };
 		FA7EA66E2A802D5400C531EC /* XCTestCase+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */; };
 		FA9FD4152A718A87000921BA /* RestaurantDomain.docc in Sources */ = {isa = PBXBuildFile; fileRef = FA9FD4142A718A87000921BA /* RestaurantDomain.docc */; };
 		FA9FD41B2A718A87000921BA /* RestaurantDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9FD4102A718A87000921BA /* RestaurantDomain.framework */; };
@@ -30,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FA36A8B42A8039BF00912F2B /* URLSessionSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionSpy.swift; sourceTree = "<group>"; };
+		FA36A8B62A8039EE00912F2B /* URLSessionDataTaskSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionDataTaskSpy.swift; sourceTree = "<group>"; };
 		FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Extensions.swift"; sourceTree = "<group>"; };
 		FA9FD4102A718A87000921BA /* RestaurantDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RestaurantDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA9FD4132A718A87000921BA /* RestaurantDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RestaurantDomain.h; sourceTree = "<group>"; };
@@ -100,6 +104,8 @@
 				FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */,
 				FAFEEE292A796E39001D6E10 /* NetworkClientSpy.swift */,
 				FADC3CC82A7F178900D16DE2 /* NetworkServiceTests.swift */,
+				FA36A8B62A8039EE00912F2B /* URLSessionDataTaskSpy.swift */,
+				FA36A8B42A8039BF00912F2B /* URLSessionSpy.swift */,
 				FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */,
 			);
 			path = RestaurantDomainTests;
@@ -227,8 +233,10 @@
 			files = (
 				FA7EA66E2A802D5400C531EC /* XCTestCase+Extensions.swift in Sources */,
 				FAFEEE2A2A796E39001D6E10 /* NetworkClientSpy.swift in Sources */,
+				FA36A8B72A8039EE00912F2B /* URLSessionDataTaskSpy.swift in Sources */,
 				FADC3CC92A7F178900D16DE2 /* NetworkServiceTests.swift in Sources */,
 				FA9FD4202A718A87000921BA /* RestaurantDomainTests.swift in Sources */,
+				FA36A8B52A8039BF00912F2B /* URLSessionSpy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
