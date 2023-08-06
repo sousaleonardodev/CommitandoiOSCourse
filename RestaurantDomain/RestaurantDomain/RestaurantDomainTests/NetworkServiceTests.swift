@@ -39,16 +39,46 @@ final class NetworkServiceTests: XCTestCase {
 
 		wait(for: [expectation])
 	}
+
+	func testLoadRequestWithSuccess() throws {
+		let url = try XCTUnwrap(URL(string: "https://comitando.com.br"))
+		let session = URLSessionSpy()
+		let sut =  NetworkService(session: session)
+		let task = URLSessionDataTaskSpy()
+
+		let data = Data()
+		let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+
+		session.stub(url: url, task: task, data: data, response: response)
+		let expectation = XCTestExpectation(description: "reqeust return")
+
+		sut.request(from: url) { result in
+			switch result {
+			case let .success((returnedData, returnedResponse)):
+				XCTAssertEqual(returnedData, data)
+				XCTAssertEqual(returnedResponse, response)
+			default:
+				XCTFail("Should receive success")
+			}
+			expectation.fulfill()
+		}
+
+		wait(for: [expectation])
+	}
 }
 
 final class URLSessionSpy: URLSession {
 	struct Stub {
 		let task: URLSessionDataTask
+		let data: Data?
+		let response: HTTPURLResponse?
 		let error: Error?
 
-		init(task: URLSessionDataTask, error: Error? = nil) {
+		init(task: URLSessionDataTask, error: Error? = nil, data: Data? = nil, response: HTTPURLResponse? = nil) {
 			self.task = task
 			self.error = error
+			self.data = data
+			self.response = response
 		}
 	}
 
@@ -59,12 +89,12 @@ final class URLSessionSpy: URLSession {
 			return URLSessionDataTaskSpy()
 		}
 
-		completionHandler(nil, nil, stub.error)
+		completionHandler(stub.data, stub.response, stub.error)
 		return stub.task
 	}
 
-	func stub(url: URL, task: URLSessionDataTask, error: Error? = nil) {
-		stubs[url] = Stub(task: task, error: error)
+	func stub(url: URL, task: URLSessionDataTask, error: Error? = nil, data: Data? = nil, response: HTTPURLResponse? = nil) {
+		stubs[url] = Stub(task: task, error: error, data: data, response: response)
 	}
 }
 
