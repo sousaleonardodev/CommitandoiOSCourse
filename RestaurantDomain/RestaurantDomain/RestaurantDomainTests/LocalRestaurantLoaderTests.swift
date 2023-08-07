@@ -5,24 +5,23 @@ import XCTest
 
 final class LocalRestaurantLoaderTests: XCTestCase {
 	func testSaveAndDeleteOldCache() {
-		let (sut, cache) = makeSUT()
+		let (sut, cache, date) = makeSUT()
 		let restaurants: [RestaurantItem] = [RestaurantItem]()
 
 		sut.save(restaurants, completion: { _ in })
 
-		XCTAssertEqual(cache.deleteCount, 1)
+		XCTAssertEqual(cache.calledMethods, [.delete])
 	}
 
 	func testSaveInsertNewDataOnCache() {
-		let (sut, cache) = makeSUT()
+		let (sut, cache, date) = makeSUT()
 		let restaurants = restaurantList()
 
 		sut.save(restaurants, completion: { _ in })
 
 		cache.completionHandleForDelete()
 
-		XCTAssertEqual(cache.deleteCount, 1)
-		XCTAssertEqual(cache.saveCount, 1)
+		XCTAssertEqual(cache.calledMethods, [.delete, .save(items: restaurants, timestamp: date)])
 	}
 
 	private func restaurantList() -> [RestaurantItem] {
@@ -34,7 +33,7 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 		]
 	}
 
-	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalRestaurantLoader, cache: CacheClientSpy) {
+	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalRestaurantLoader, cache: CacheClientSpy, timestamp: Date) {
 		let cacheClient = CacheClientSpy()
 		let currentDate = Date()
 		let sut = LocalRestaurantLoader(cacheClient: cacheClient, currentDate: { currentDate })
@@ -42,22 +41,28 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 		trackForMemoryLeaks(cacheClient)
 		trackForMemoryLeaks(sut)
 
-		return (sut, cacheClient)
+		return (sut, cacheClient, currentDate)
 	}
 }
 
 
 final class CacheClientSpy: CacheClient {
-	private(set) var saveCount = 0
-	func save(_ restaurants: [RestaurantDomain.RestaurantItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
-		saveCount += 1
+	enum Method: Equatable {
+		case save(items: [RestaurantItem], timestamp: Date)
+		case delete
 	}
 
-	private(set) var deleteCount = 0
+	private(set) var calledMethods: [Method] = []
+
+	func save(_ restaurants: [RestaurantDomain.RestaurantItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
+		calledMethods.append(.save(items: restaurants, timestamp: timestamp))
+	}
+
 	private var completionHandler: ((Error?) -> Void)?
 	func delete(completion: @escaping (Error?) -> Void) {
-		deleteCount += 1
 		completionHandler = completion
+
+		calledMethods.append(.delete)
 	}
 
 	func completionHandleForDelete(error: Error? = nil) {
