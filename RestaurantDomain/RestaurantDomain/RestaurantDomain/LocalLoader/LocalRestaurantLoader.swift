@@ -17,13 +17,13 @@ final class LocalRestaurantLoader {
 	}
 
 	func save(_ restaurants: [RestaurantItem], completion: @escaping (Error?) -> Void) {
-		cacheClient.delete { [cacheClient, currentDate] error in
+		cacheClient.delete { [weak self, currentDate] error in
 			guard error == nil else {
 				completion(error)
 				return
 			}
 
-			cacheClient.save(restaurants, timestamp: currentDate(), completion: completion)
+			self?.cacheClient.save(restaurants, timestamp: currentDate(), completion: completion)
 		}
 	}
 }

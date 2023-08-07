@@ -5,9 +5,7 @@ import XCTest
 
 final class LocalRestaurantLoaderTests: XCTestCase {
 	func testSaveAndDeleteOldCache() {
-		let currentDate = Date()
-		let cache = CacheClientSpy()
-		let sut = LocalRestaurantLoader(cacheClient: cache, currentDate: { currentDate })
+		let (sut, cache) = makeSUT()
 		let restaurants: [RestaurantItem] = [RestaurantItem]()
 
 		sut.save(restaurants, completion: { _ in })
@@ -16,11 +14,10 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 	}
 
 	func testSaveInsertNewDataOnCache() {
-		let currentDate = Date()
-		let cache = CacheClientSpy()
-		let sut = LocalRestaurantLoader(cacheClient: cache, currentDate: { currentDate })
+		let (sut, cache) = makeSUT()
+		let restaurants = restaurantList()
 
-		sut.save(restaurantList(), completion: { _ in })
+		sut.save(restaurants, completion: { _ in })
 
 		cache.completionHandleForDelete()
 
@@ -35,6 +32,17 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 			.init(id: UUID(), name: "name2", location: "location2", distance: Float(20), ratings: 3, parasols: 9),
 			.init(id: UUID(), name: "name3", location: "location3", distance: Float(100), ratings: 1, parasols: 5)
 		]
+	}
+
+	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalRestaurantLoader, cache: CacheClientSpy) {
+		let cacheClient = CacheClientSpy()
+		let currentDate = Date()
+		let sut = LocalRestaurantLoader(cacheClient: cacheClient, currentDate: { currentDate })
+
+		trackForMemoryLeaks(cacheClient)
+		trackForMemoryLeaks(sut)
+
+		return (sut, cacheClient)
 	}
 }
 
