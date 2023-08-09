@@ -5,7 +5,7 @@ import XCTest
 
 final class LocalRestaurantLoaderTests: XCTestCase {
 	func testSaveAndDeleteOldCache() {
-		let (sut, cache, date) = makeSUT()
+		let (sut, cache, _) = makeSUT()
 		let restaurants: [RestaurantItem] = [RestaurantItem]()
 
 		sut.save(restaurants, completion: { _ in })
@@ -22,6 +22,39 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 		cache.completionHandleForDelete()
 
 		XCTAssertEqual(cache.calledMethods, [.delete, .save(items: restaurants, timestamp: date)])
+	}
+
+	func testSaveFailAfterDeletingOldCache() {
+		let (sut, cache, _) = makeSUT()
+		let restaurants = restaurantList()
+
+		var returnedError: Error?
+		sut.save(restaurants, completion: { error in
+			returnedError = error
+		})
+
+		let error = NSError(domain: "error testing", code: -1)
+		cache.completionHandleForDelete(error: error)
+
+		XCTAssertNotNil(returnedError)
+		XCTAssertEqual(returnedError as? NSError, error)
+	}
+
+	func testSaveFail() {
+		let (sut, cache, _) = makeSUT()
+		let restaurants = restaurantList()
+
+		var returnedError: Error?
+		sut.save(restaurants) { error in
+			returnedError = error
+		}
+
+		var error = NSError(domain: "error saving", code: -1)
+		cache.completionHandleForDelete()
+		cache.completionHandlerForSave(error: error)
+
+		XCTAssertNotNil(returnedError)
+		XCTAssertEqual(returnedError as? NSError, error)
 	}
 
 	private func restaurantList() -> [RestaurantItem] {
@@ -55,17 +88,22 @@ final class CacheClientSpy: CacheClient {
 	private(set) var calledMethods: [Method] = []
 
 	func save(_ restaurants: [RestaurantDomain.RestaurantItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
+		completionSaveHandler = completion
 		calledMethods.append(.save(items: restaurants, timestamp: timestamp))
 	}
 
-	private var completionHandler: ((Error?) -> Void)?
 	func delete(completion: @escaping (Error?) -> Void) {
-		completionHandler = completion
-
+		completionDeleteHandler = completion
 		calledMethods.append(.delete)
 	}
 
+	private var completionDeleteHandler: ((Error?) -> Void)?
 	func completionHandleForDelete(error: Error? = nil) {
-		completionHandler?(error)
+		completionDeleteHandler?(error)
+	}
+
+	private var completionSaveHandler: ((Error?) -> Void)?
+	func completionHandlerForSave(error: Error? = nil) {
+		completionSaveHandler?(error)
 	}
 }
