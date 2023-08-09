@@ -1,7 +1,7 @@
 //
 
 import XCTest
-@testable import RestaurantDomain
+import RestaurantDomain
 
 final class LocalRestaurantLoaderTests: XCTestCase {
 	func testSaveAndDeleteOldCache() {
