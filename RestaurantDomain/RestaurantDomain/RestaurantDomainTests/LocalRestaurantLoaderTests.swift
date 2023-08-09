@@ -49,12 +49,27 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 			returnedError = error
 		}
 
-		var error = NSError(domain: "error saving", code: -1)
+		let error = NSError(domain: "error saving", code: -1)
 		cache.completionHandleForDelete()
 		cache.completionHandlerForSave(error: error)
 
 		XCTAssertNotNil(returnedError)
 		XCTAssertEqual(returnedError as? NSError, error)
+	}
+
+	func testSaveSuccessAfetSaveNewcache() {
+		let (sut, cache, _) = makeSUT()
+		let restaurants = restaurantList()
+
+		var returnedError: Error?
+		sut.save(restaurants) { error in
+			returnedError = error
+		}
+
+		cache.completionHandleForDelete()
+		cache.completionHandlerForSave()
+
+		XCTAssertNil(returnedError)
 	}
 
 	private func restaurantList() -> [RestaurantItem] {
