@@ -6,9 +6,7 @@ import XCTest
 final class LocalRestaurantLoaderTests: XCTestCase {
 	func testSaveAndDeleteOldCache() {
 		let (sut, cache, _) = makeSUT()
-		let restaurants: [RestaurantItem] = [RestaurantItem]()
-
-		sut.save(restaurants, completion: { _ in })
+		assert(sut, completion: nil) {}
 
 		XCTAssertEqual(cache.calledMethods, [.delete])
 	}
@@ -26,58 +24,68 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 
 	func testSaveFailAfterDeletingOldCache() {
 		let (sut, cache, _) = makeSUT()
-		let restaurants = restaurantList()
-
-		var returnedError: Error?
-		sut.save(restaurants, completion: { error in
-			returnedError = error
-		})
-
 		let error = NSError(domain: "error testing", code: -1)
-		cache.completionHandleForDelete(error: error)
 
-		XCTAssertNotNil(returnedError)
-		XCTAssertEqual(returnedError as? NSError, error)
+		assert(sut, completion: error) {
+			cache.completionHandleForDelete(error: error)
+		}
 	}
 
 	func testSaveFail() {
 		let (sut, cache, _) = makeSUT()
-		let restaurants = restaurantList()
-
-		var returnedError: Error?
-		sut.save(restaurants) { error in
-			returnedError = error
-		}
-
 		let error = NSError(domain: "error saving", code: -1)
-		cache.completionHandleForDelete()
-		cache.completionHandlerForSave(error: error)
 
-		XCTAssertNotNil(returnedError)
-		XCTAssertEqual(returnedError as? NSError, error)
+		assert(sut, completion: error) {
+			cache.completionHandleForDelete()
+			cache.completionHandlerForSave(error: error)
+		}
 	}
 
 	func testSaveSuccessAfetSaveNewcache() {
 		let (sut, cache, _) = makeSUT()
-		let restaurants = restaurantList()
 
+		assert(sut, completion: nil) {
+			cache.completionHandleForDelete()
+			cache.completionHandlerForSave()
+		}
+	}
+
+	func testSaveNonInsertedAfterDelloc() {
+		let cache = CacheClientSpy()
+		var sut: LocalRestaurantLoader? = LocalRestaurantLoader(cacheClient: cache, currentDate: { Date() } )
+
+
+		sut?.save([RestaurantItem]()) { _ in }
+
+		sut = nil
+		cache.completionHandleForDelete()
+	}
+
+	private func assert(
+		_ sut: LocalRestaurantLoader,
+		completion error: NSError?,
+		when action: () -> Void,
+		file: StaticString = #file,
+		line: UInt = #line
+	) {
+		let restaurants = restaurantList()
 		var returnedError: Error?
+
 		sut.save(restaurants) { error in
 			returnedError = error
 		}
 
-		cache.completionHandleForDelete()
-		cache.completionHandlerForSave()
+		action()
 
-		XCTAssertNil(returnedError)
+		XCTAssertEqual(returnedError as? NSError, error)
 	}
 
 	private func restaurantList() -> [RestaurantItem] {
 		[
-			.init(id: UUID(), name: "name", location: "location", distance: Float(1), ratings: 5, parasols: 11),
-			.init(id: UUID(), name: "name1", location: "location1", distance: Float(10), ratings: 2, parasols: 10),
-			.init(id: UUID(), name: "name2", location: "location2", distance: Float(20), ratings: 3, parasols: 9),
-			.init(id: UUID(), name: "name3", location: "location3", distance: Float(100), ratings: 1, parasols: 5)
+			.init(id: UUID(), name: "name", location: "location", distance: 1.0, ratings: 5, parasols: 11),
+			.init(id: UUID(), name: "name1", location: "location1", distance: 10.2, ratings: 2, parasols: 10),
+			.init(id: UUID(), name: "name2", location: "location2", distance: 20.5, ratings: 3, parasols: 9),
+			.init(id: UUID(), name: "name3", location: "location3", distance: 100.8, ratings: 1, parasols: 5)
 		]
 	}
 
