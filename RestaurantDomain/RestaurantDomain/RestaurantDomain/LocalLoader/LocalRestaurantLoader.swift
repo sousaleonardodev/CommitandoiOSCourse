@@ -23,7 +23,12 @@ final class LocalRestaurantLoader {
 				return
 			}
 
-			self?.cacheClient.save(restaurants, timestamp: currentDate(), completion: completion)
+			self?.cacheClient.save(restaurants, timestamp: currentDate()) { [weak self] error in
+				guard self != nil else {
+					return
+				}
+				completion(error)
+			}
 		}
 	}
 }

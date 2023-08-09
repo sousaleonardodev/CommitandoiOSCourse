@@ -54,11 +54,32 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 		let cache = CacheClientSpy()
 		var sut: LocalRestaurantLoader? = LocalRestaurantLoader(cacheClient: cache, currentDate: { Date() } )
 
-
-		sut?.save([RestaurantItem]()) { _ in }
+		var returnedError: Error?
+		sut?.save([RestaurantItem]()) { error in
+			returnedError = error
+		}
 
 		sut = nil
 		cache.completionHandleForDelete()
+
+		XCTAssertNil(returnedError)
+	}
+
+	func testSaveDeallocAfterSuccessfulDeleting() {
+		let cache = CacheClientSpy()
+		var sut: LocalRestaurantLoader? = LocalRestaurantLoader(cacheClient: cache, currentDate: { Date() } )
+
+		var returnedError: Error?
+		sut?.save([RestaurantItem]()) { error in
+			returnedError = error
+		}
+
+		cache.completionHandleForDelete()
+		sut = nil
+
+		cache.completionHandlerForSave()
+
+		XCTAssertNil(returnedError)
 	}
 
 	private func assert(
