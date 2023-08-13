@@ -3,7 +3,7 @@
 import XCTest
 import RestaurantDomain
 
-final class LocalRestaurantLoaderTests: XCTestCase {
+final class LocalRestaurantLoaderSavingTests: XCTestCase {
 	func testSaveAndDeleteOldCache() {
 		let (sut, cache, _) = makeSUT()
 		assert(sut, completion: nil) {}
