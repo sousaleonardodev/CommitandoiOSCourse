@@ -8,11 +8,11 @@ public protocol CacheClient {
 
 	func save(_ restaurants: [RestaurantItem], timestamp: Date, completion: @escaping CacheCompletion)
 	func delete(completion: @escaping CacheCompletion)
-	func getRestaurants(completion: @escaping GetCompletion)
+	func load(completion: @escaping GetCompletion)
 }
 
 public extension CacheClient {
-	func getRestaurants(completion: @escaping GetCompletion) {}
+	func load(completion: @escaping GetCompletion) {}
 	func save(_ restaurants: [RestaurantItem], timestamp: Date, completion: @escaping CacheCompletion) {}
 	func delete(completion: @escaping CacheCompletion) {}
 }
@@ -48,8 +48,8 @@ public final class LocalRestaurantLoader {
 
 extension LocalRestaurantLoader: RestaurantLoader {
 	public func load(completion: @escaping (RestaurantResult) -> Void) {
-		cacheClient.getRestaurants { error in
-			guard error != nil else {
+		cacheClient.load { error in
+			guard error == nil else {
 				completion(.failure(.invalidData))
 				return
 			}
