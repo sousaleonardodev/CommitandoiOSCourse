@@ -54,15 +54,30 @@ public final class LocalRestaurantLoader {
 
 extension LocalRestaurantLoader: RestaurantLoader {
 	public func load(completion: @escaping (RestaurantResult) -> Void) {
-		cacheClient.load { state in
+		cacheClient.load { [weak self] state in
+			guard let self else {
+				return
+			}
+
 			switch state {
-			case .empty:
-				completion(.success([]))
 			case let .failure(error):
 				completion(.failure(.invalidData))
-			case let .success(items, timestamp):
+			case let .success(items, timestamp) where self.validate(timestamp: timestamp):
 				completion(.success(items))
+			case .success, .empty:
+				completion(.success([]))
 			}
 		}
+	}
+
+
+	private func validate(timestamp: Date) -> Bool {
+		let calendar = Calendar(identifier: .gregorian)
+
+		guard let maxAge = calendar.date(byAdding: .day, value: 1, to: timestamp) else {
+			return false
+		}
+
+		return currentDate() < maxAge
 	}
 }

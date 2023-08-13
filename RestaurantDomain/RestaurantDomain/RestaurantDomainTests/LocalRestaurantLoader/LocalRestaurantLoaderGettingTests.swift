@@ -24,6 +24,40 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 
 		XCTAssertEqual(cache.calledMethods, [.load])
 	}
+
+	func testLoadingSuccessWithWithinExpiringDate() {
+		let (sut, cache, date) = makeSUT()
+		let oneDayOlderDate = date.adding(days: -1).adding(seconds: 1)
+		let items = restaurantList()
+
+		assert(sut, completion: .success(items)) {
+			cache.completionHandlerForLoad(state: .success(items: items, timestamp: oneDayOlderDate))
+		}
+
+		XCTAssertEqual(cache.calledMethods, [.load])
+	}
+
+	func testLoadingSuccessWithBeyondExpiringDate() {
+		let (sut, cache, date) = makeSUT()
+		let oneDayOlderDate = date.adding(days: -20).adding(seconds: 1)
+		let items = restaurantList()
+
+		assert(sut, completion: .success([])) {
+			cache.completionHandlerForLoad(state: .success(items: items, timestamp: oneDayOlderDate))
+		}
+
+		XCTAssertEqual(cache.calledMethods, [.load])
+	}
+}
+
+private extension Date {
+	func adding(days: Int) -> Date {
+		Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
+	}
+
+	func adding(seconds: TimeInterval) -> Date {
+		self + seconds
+	}
 }
 
 private extension LocalRestaurantLoaderGettingTests {
