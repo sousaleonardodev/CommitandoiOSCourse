@@ -6,31 +6,23 @@ import RestaurantDomain
 final class LocalRestaurantLoaderGettingTests: XCTestCase {
 	func testLoadingRestaurantsReturnedError() {
 		let (sut, cache, _) = makeSUT()
-		var returnedResult: RestaurantLoader.RestaurantResult?
 
-		sut.load { result in
-			returnedResult = result
+		assert(sut, completion: .failure(.invalidData)) {
+			let error = NSError(domain: "Loading error", code: -1)
+			cache.completionHandlerForLoad(error: error)
 		}
 
-		let error = NSError(domain: "Loading error", code: -1)
-		cache.completionHandlerForLoad(error: error)
-
 		XCTAssertEqual(cache.calledMethods, [.load])
-		XCTAssertEqual(returnedResult, .failure(.invalidData))
 	}
 
 	func testLoadingRestaurantSuccessEmptyReturn() {
 		let (sut, cache, _) = makeSUT()
-		var returnedResult: RestaurantLoader.RestaurantResult?
 
-		sut.load { result in
-			returnedResult = result
+		assert(sut, completion: .success([])) {
+			cache.completionHandlerForLoad()
 		}
 
-		cache.completionHandlerForLoad()
-
 		XCTAssertEqual(cache.calledMethods, [.load])
-		XCTAssertEqual(returnedResult, .success([]))
 	}
 }
 
@@ -56,5 +48,24 @@ private extension LocalRestaurantLoaderGettingTests {
 			.init(id: UUID(), name: "name2", location: "location2", distance: 20.5, ratings: 3, parasols: 9),
 			.init(id: UUID(), name: "name3", location: "location3", distance: 100.8, ratings: 1, parasols: 5)
 		]
+	}
+
+	private func assert(
+		_ sut: LocalRestaurantLoader,
+		completion result: RestaurantLoader.RestaurantResult?,
+		when action: () -> Void,
+		file: StaticString = #file,
+		line: UInt = #line
+	) {
+		let restaurants = restaurantList()
+		var returnedResult: RestaurantLoader.RestaurantResult?
+
+		sut.load { result in
+			returnedResult = result
+		}
+
+		action()
+
+		XCTAssertEqual(returnedResult, result)
 	}
 }
