@@ -64,7 +64,7 @@ final class RestaurantDomainTests: XCTestCase {
 		let client = NetworkClientSpy()
 		var sut: RemoteRestaurantLoader? = RemoteRestaurantLoader(url: anyURL, networkClient: client)
 
-		var returnedResult: RemoteRestaurantLoader.RemoterestaurantResult?
+		var returnedResult: RemoteRestaurantLoader.RestaurantResult?
 		sut?.load(completion: { result in
 			returnedResult = result
 		})
@@ -77,13 +77,13 @@ final class RestaurantDomainTests: XCTestCase {
 
 	private func assert(
 		_ sut: RemoteRestaurantLoader,
-		completion result: RemoteRestaurantLoader.RemoterestaurantResult?,
+		completion result: RemoteRestaurantLoader.RestaurantResult?,
 		when action: () throws -> Void,
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) throws {
 		let expect = XCTestExpectation(description: "request expectation")
-		var returnedResult: RemoteRestaurantLoader.RemoterestaurantResult?
+		var returnedResult: RemoteRestaurantLoader.RestaurantResult?
 
 		sut.load { state in
 			returnedResult = state

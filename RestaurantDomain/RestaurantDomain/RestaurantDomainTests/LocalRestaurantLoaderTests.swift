@@ -110,7 +110,10 @@ final class LocalRestaurantLoaderTests: XCTestCase {
 		]
 	}
 
-	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalRestaurantLoader, cache: CacheClientSpy, timestamp: Date) {
+	private func makeSUT(
+		file: StaticString = #filePath,
+		line: UInt = #line
+	) -> (sut: LocalRestaurantLoader, cache: CacheClientSpy, timestamp: Date) {
 		let cacheClient = CacheClientSpy()
 		let currentDate = Date()
 		let sut = LocalRestaurantLoader(cacheClient: cacheClient, currentDate: { currentDate })
@@ -131,7 +134,11 @@ final class CacheClientSpy: CacheClient {
 
 	private(set) var calledMethods: [Method] = []
 
-	func save(_ restaurants: [RestaurantDomain.RestaurantItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
+	func save(
+		_ restaurants: [RestaurantDomain.RestaurantItem],
+		timestamp: Date,
+		completion: @escaping (Error?) -> Void
+	) {
 		completionSaveHandler = completion
 		calledMethods.append(.save(items: restaurants, timestamp: timestamp))
 	}
