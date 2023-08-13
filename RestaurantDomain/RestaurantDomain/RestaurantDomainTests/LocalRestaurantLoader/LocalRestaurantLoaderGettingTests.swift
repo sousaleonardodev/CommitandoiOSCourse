@@ -9,7 +9,7 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 
 		assert(sut, completion: .failure(.invalidData)) {
 			let error = NSError(domain: "Loading error", code: -1)
-			cache.completionHandlerForLoad(error: error)
+			cache.completionHandlerForLoad(state: .failure(error: error))
 		}
 
 		XCTAssertEqual(cache.calledMethods, [.load])
@@ -19,7 +19,7 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 		let (sut, cache, _) = makeSUT()
 
 		assert(sut, completion: .success([])) {
-			cache.completionHandlerForLoad()
+			cache.completionHandlerForLoad(state: .empty)
 		}
 
 		XCTAssertEqual(cache.calledMethods, [.load])

@@ -2,17 +2,23 @@
 
 import Foundation
 
+public enum LoadResultState {
+	case empty
+	case success(items: [RestaurantItem], timestamp: Date)
+	case failure(error: Error)
+}
+
 public protocol CacheClient {
 	typealias CacheCompletion = (Error?) -> Void
-	typealias GetCompletion = (Error?) -> Void
+	typealias LoadCompletion = (LoadResultState) -> Void
 
 	func save(_ restaurants: [RestaurantItem], timestamp: Date, completion: @escaping CacheCompletion)
 	func delete(completion: @escaping CacheCompletion)
-	func load(completion: @escaping GetCompletion)
+	func load(completion: @escaping LoadCompletion)
 }
 
 public extension CacheClient {
-	func load(completion: @escaping GetCompletion) {}
+	func load(completion: @escaping LoadCompletion) {}
 	func save(_ restaurants: [RestaurantItem], timestamp: Date, completion: @escaping CacheCompletion) {}
 	func delete(completion: @escaping CacheCompletion) {}
 }
@@ -48,13 +54,15 @@ public final class LocalRestaurantLoader {
 
 extension LocalRestaurantLoader: RestaurantLoader {
 	public func load(completion: @escaping (RestaurantResult) -> Void) {
-		cacheClient.load { error in
-			guard error == nil else {
+		cacheClient.load { state in
+			switch state {
+			case .empty:
+				completion(.success([]))
+			case let .failure(error):
 				completion(.failure(.invalidData))
-				return
+			case let .success(items, timestamp):
+				completion(.success(items))
 			}
-
-			completion(.success([]))
 		}
 	}
 }

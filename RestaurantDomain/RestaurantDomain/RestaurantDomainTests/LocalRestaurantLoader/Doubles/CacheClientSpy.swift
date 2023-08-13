@@ -26,22 +26,22 @@ final class CacheClientSpy: CacheClient {
 		calledMethods.append(.delete)
 	}
 
-	private var completionDeleteHandler: ((Error?) -> Void)?
+	private var completionDeleteHandler: CacheCompletion?
 	func completionHandleForDelete(error: Error? = nil) {
 		completionDeleteHandler?(error)
 	}
 
-	private var completionSaveHandler: ((Error?) -> Void)?
+	private var completionSaveHandler: CacheCompletion?
 	func completionHandlerForSave(error: Error? = nil) {
 		completionSaveHandler?(error)
 	}
 
-	private var completionLoaderHandler: ((Error?) -> Void)?
-	func completionHandlerForLoad(error: Error? = nil) {
-		completionLoaderHandler?(error)
+	private var completionLoaderHandler: LoadCompletion?
+	func completionHandlerForLoad(state: LoadResultState) {
+		completionLoaderHandler?(state)
 	}
 
-	func load(completion: @escaping GetCompletion) {
+	func load(completion: @escaping LoadCompletion) {
 		calledMethods.append(.load)
 		completionLoaderHandler = completion
 	}
