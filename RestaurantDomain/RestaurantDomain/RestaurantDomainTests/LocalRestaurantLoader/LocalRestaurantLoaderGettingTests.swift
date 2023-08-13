@@ -18,6 +18,20 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 		XCTAssertEqual(cache.calledMethods, [.load])
 		XCTAssertEqual(returnedResult, .failure(.invalidData))
 	}
+
+	func testLoadingRestaurantSuccessEmptyReturn() {
+		let (sut, cache, _) = makeSUT()
+		var returnedResult: RestaurantLoader.RestaurantResult?
+
+		sut.load { result in
+			returnedResult = result
+		}
+
+		cache.completionHandlerForLoad()
+
+		XCTAssertEqual(cache.calledMethods, [.load])
+		XCTAssertEqual(returnedResult, .success([]))
+	}
 }
 
 private extension LocalRestaurantLoaderGettingTests {

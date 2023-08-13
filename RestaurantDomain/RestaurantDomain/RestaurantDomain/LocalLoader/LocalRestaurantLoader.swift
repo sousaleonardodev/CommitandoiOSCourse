@@ -54,7 +54,7 @@ extension LocalRestaurantLoader: RestaurantLoader {
 				return
 			}
 
-			completion(.success([RestaurantItem]()))
+			completion(.success([]))
 		}
 	}
 }
