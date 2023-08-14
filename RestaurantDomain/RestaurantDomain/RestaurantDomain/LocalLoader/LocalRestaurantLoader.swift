@@ -26,10 +26,16 @@ public extension CacheClient {
 public final class LocalRestaurantLoader {
 	private let cacheClient: CacheClient
 	private let currentDate: () -> Date
+	private let cachePolice: CachePolice
 
-	public init(cacheClient: CacheClient, currentDate: @escaping () -> Date) {
+	public init(
+		cacheClient: CacheClient,
+		cachePolice: CachePolice = RestaurantCachePolice(),
+		currentDate: @escaping () -> Date
+	) {
 		self.cacheClient = cacheClient
 		self.currentDate = currentDate
+		self.cachePolice = cachePolice
 	}
 
 	public func save(_ restaurants: [RestaurantItem], completion: @escaping (Error?) -> Void) {
@@ -52,6 +58,26 @@ public final class LocalRestaurantLoader {
 	}
 }
 
+public protocol CachePolice {
+	func validate(timestamp: Date, currentDate: Date) -> Bool
+}
+
+public final class RestaurantCachePolice: CachePolice {
+	private let maxAge: Int = 1
+	
+	public init() {}
+
+	public func validate(timestamp: Date, currentDate: Date) -> Bool {
+		let calendar = Calendar(identifier: .gregorian)
+
+		guard let maxAge = calendar.date(byAdding: .day, value: 1, to: timestamp) else {
+			return false
+		}
+
+		return currentDate < maxAge
+	}
+}
+
 extension LocalRestaurantLoader: RestaurantLoader {
 	public func load(completion: @escaping (RestaurantResult) -> Void) {
 		cacheClient.load { [weak self] state in
@@ -61,7 +87,7 @@ extension LocalRestaurantLoader: RestaurantLoader {
 			validateCache(state: state)
 
 			switch state {
-			case let .success(items, timestamp) where self.validate(timestamp: timestamp):
+			case let .success(items, timestamp) where self.cachePolice.validate(timestamp: timestamp, currentDate: currentDate()):
 				completion(.success(items))
 			case .success, .empty:
 				completion(.success([]))
@@ -73,21 +99,11 @@ extension LocalRestaurantLoader: RestaurantLoader {
 
 	private func validateCache(state: LoadResultState) {
 		switch state {
-		case .success(_, let timestamp) where !validate(timestamp: timestamp):
+		case .success(_, let timestamp) where !cachePolice.validate(timestamp: timestamp, currentDate: currentDate()):
 			cacheClient.delete{ _ in }
 		case .failure:
 			cacheClient.delete{ _ in }
 		default: break
 		}
-	}
-
-	private func validate(timestamp: Date) -> Bool {
-		let calendar = Calendar(identifier: .gregorian)
-
-		guard let maxAge = calendar.date(byAdding: .day, value: 1, to: timestamp) else {
-			return false
-		}
-
-		return currentDate() < maxAge
 	}
 }
