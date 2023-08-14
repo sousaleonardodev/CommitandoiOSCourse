@@ -58,23 +58,28 @@ extension LocalRestaurantLoader: RestaurantLoader {
 			guard let self else {
 				return
 			}
+			validateCache(state: state)
 
 			switch state {
 			case let .success(items, timestamp) where self.validate(timestamp: timestamp):
 				completion(.success(items))
-			case .success:
-				cacheClient.delete { _ in }
-				completion(.success([]))
-			case .empty:
+			case .success, .empty:
 				completion(.success([]))
 			case let .failure(error):
-				self.cacheClient.delete { _ in }
-
 				completion(.failure(.invalidData))
 			}
 		}
 	}
 
+	private func validateCache(state: LoadResultState) {
+		switch state {
+		case .success(_, let timestamp) where !validate(timestamp: timestamp):
+			cacheClient.delete{ _ in }
+		case .failure:
+			cacheClient.delete{ _ in }
+		default: break
+		}
+	}
 
 	private func validate(timestamp: Date) -> Bool {
 		let calendar = Calendar(identifier: .gregorian)

@@ -3,34 +3,38 @@
 import XCTest
 import RestaurantDomain
 
-final class LocalRestaurantLoaderGettingTests: XCTestCase {
-	func testLoadingRestaurantsReturnedError() {
+final class LocalRestauranteLoaderCacheTests: XCTestCase {
+
+	func testAfterLoadErrorDeleteCache() {
 		let (sut, cache, _) = makeSUT()
 
-		assert(sut, completion: .failure(.invalidData)) {
-			let error = NSError(domain: "Loading error", code: -1)
-			cache.completionHandlerForLoad(state: .failure(error: error))
-		}
+		sut.load { _ in }
+
+		let error = NSError(domain: "testing", code: -1)
+		cache.completionHandlerForLoad(state: .failure(error: error))
+
+		XCTAssertEqual(cache.calledMethods, [.load, .delete])
 	}
 
-	func testLoadingRestaurantSuccessEmptyReturn() {
+	func testLoadWithEmptyResultNotDeletingCache() {
 		let (sut, cache, _) = makeSUT()
 
-		assert(sut, completion: .success([])) {
-			cache.completionHandlerForLoad(state: .empty)
-		}
+		sut.load { _ in }
+		cache.completionHandlerForLoad(state: .empty)
+
+		XCTAssertEqual(cache.calledMethods, [.load])
 	}
 
-	func testLoadingSuccessWithWithinExpiringDate() {
+	func testLoadingSuccessWithBeyondExpiringDate() {
 		let (sut, cache, date) = makeSUT()
-		let oneDayOlderDate = date.adding(days: -1).adding(seconds: 1)
+		let oneDayOlderDate = date.adding(days: -20).adding(seconds: 1)
 		let items = restaurantList()
 
-		assert(sut, completion: .success(items)) {
+		assert(sut, completion: .success([])) {
 			cache.completionHandlerForLoad(state: .success(items: items, timestamp: oneDayOlderDate))
 		}
 
-		XCTAssertEqual(cache.calledMethods, [.load])
+		XCTAssertEqual(cache.calledMethods, [.load, .delete])
 	}
 }
 
@@ -44,7 +48,7 @@ private extension Date {
 	}
 }
 
-private extension LocalRestaurantLoaderGettingTests {
+private extension LocalRestauranteLoaderCacheTests {
 	func makeSUT(
 		file: StaticString = #filePath,
 		line: UInt = #line
@@ -84,6 +88,6 @@ private extension LocalRestaurantLoaderGettingTests {
 
 		action()
 
-		XCTAssertEqual(returnedResult, result)
+		XCTAssertEqual(returnedResult, result, file: file, line: line)
 	}
 }

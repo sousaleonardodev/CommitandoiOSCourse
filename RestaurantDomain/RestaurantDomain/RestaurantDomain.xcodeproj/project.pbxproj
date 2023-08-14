@@ -22,6 +22,7 @@
 		FAF1351B2A89787700B4F71C /* RestaurantLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF1351A2A89787700B4F71C /* RestaurantLoader.swift */; };
 		FAF1351D2A897C0100B4F71C /* LocalRestaurantLoaderGettingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF1351C2A897C0100B4F71C /* LocalRestaurantLoaderGettingTests.swift */; };
 		FAF135212A897CE400B4F71C /* CacheClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF135202A897CE400B4F71C /* CacheClientSpy.swift */; };
+		FAF135232A89B5F400B4F71C /* LocalRestauranteLoaderCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF135222A89B5F400B4F71C /* LocalRestauranteLoaderCacheTests.swift */; };
 		FAFEEE282A796E07001D6E10 /* RestaurantModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFEEE272A796E07001D6E10 /* RestaurantModels.swift */; };
 		FAFEEE2A2A796E39001D6E10 /* NetworkClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFEEE292A796E39001D6E10 /* NetworkClientSpy.swift */; };
 /* End PBXBuildFile section */
@@ -54,6 +55,7 @@
 		FAF1351A2A89787700B4F71C /* RestaurantLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantLoader.swift; sourceTree = "<group>"; };
 		FAF1351C2A897C0100B4F71C /* LocalRestaurantLoaderGettingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRestaurantLoaderGettingTests.swift; sourceTree = "<group>"; };
 		FAF135202A897CE400B4F71C /* CacheClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheClientSpy.swift; sourceTree = "<group>"; };
+		FAF135222A89B5F400B4F71C /* LocalRestauranteLoaderCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRestauranteLoaderCacheTests.swift; sourceTree = "<group>"; };
 		FAFEEE272A796E07001D6E10 /* RestaurantModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantModels.swift; sourceTree = "<group>"; };
 		FAFEEE292A796E39001D6E10 /* NetworkClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClientSpy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -154,6 +156,7 @@
 				FAF1351F2A897CD900B4F71C /* Doubles */,
 				FAF1351C2A897C0100B4F71C /* LocalRestaurantLoaderGettingTests.swift */,
 				FA6B21AB2A8177DF00636DC5 /* LocalRestaurantLoaderSavingTests.swift */,
+				FAF135222A89B5F400B4F71C /* LocalRestauranteLoaderCacheTests.swift */,
 			);
 			path = LocalRestaurantLoader;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 			files = (
 				FA6B21AC2A8177DF00636DC5 /* LocalRestaurantLoaderSavingTests.swift in Sources */,
 				FA7EA66E2A802D5400C531EC /* XCTestCase+Extensions.swift in Sources */,
+				FAF135232A89B5F400B4F71C /* LocalRestauranteLoaderCacheTests.swift in Sources */,
 				FAF1351D2A897C0100B4F71C /* LocalRestaurantLoaderGettingTests.swift in Sources */,
 				FAFEEE2A2A796E39001D6E10 /* NetworkClientSpy.swift in Sources */,
 				FA36A8B72A8039EE00912F2B /* URLSessionDataTaskSpy.swift in Sources */,
