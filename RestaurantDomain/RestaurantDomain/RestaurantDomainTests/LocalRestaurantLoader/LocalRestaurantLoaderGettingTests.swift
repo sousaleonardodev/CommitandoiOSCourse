@@ -11,8 +11,6 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 			let error = NSError(domain: "Loading error", code: -1)
 			cache.completionHandlerForLoad(state: .failure(error: error))
 		}
-
-		XCTAssertEqual(cache.calledMethods, [.load])
 	}
 
 	func testLoadingRestaurantSuccessEmptyReturn() {
@@ -21,8 +19,6 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 		assert(sut, completion: .success([])) {
 			cache.completionHandlerForLoad(state: .empty)
 		}
-
-		XCTAssertEqual(cache.calledMethods, [.load])
 	}
 
 	func testLoadingSuccessWithWithinExpiringDate() {
@@ -45,6 +41,26 @@ final class LocalRestaurantLoaderGettingTests: XCTestCase {
 		assert(sut, completion: .success([])) {
 			cache.completionHandlerForLoad(state: .success(items: items, timestamp: oneDayOlderDate))
 		}
+
+		XCTAssertEqual(cache.calledMethods, [.load, .delete])
+	}
+
+	func testAfterLoadErrorDeleteCache() {
+		let (sut, cache, _) = makeSUT()
+
+		sut.load { _ in }
+
+		let error = NSError(domain: "testing", code: -1)
+		cache.completionHandlerForLoad(state: .failure(error: error))
+
+		XCTAssertEqual(cache.calledMethods, [.load, .delete])
+	}
+
+	func testLoadWithEmptyResultNotDeletingCache() {
+		let (sut, cache, _) = makeSUT()
+
+		sut.load { _ in }
+		cache.completionHandlerForLoad(state: .empty)
 
 		XCTAssertEqual(cache.calledMethods, [.load])
 	}

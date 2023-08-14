@@ -60,12 +60,17 @@ extension LocalRestaurantLoader: RestaurantLoader {
 			}
 
 			switch state {
-			case let .failure(error):
-				completion(.failure(.invalidData))
 			case let .success(items, timestamp) where self.validate(timestamp: timestamp):
 				completion(.success(items))
-			case .success, .empty:
+			case .success:
+				cacheClient.delete { _ in }
 				completion(.success([]))
+			case .empty:
+				completion(.success([]))
+			case let .failure(error):
+				self.cacheClient.delete { _ in }
+
+				completion(.failure(.invalidData))
 			}
 		}
 	}
