@@ -8,21 +8,6 @@ public enum LoadResultState {
 	case failure(error: Error)
 }
 
-public protocol CacheClient {
-	typealias CacheCompletion = (Error?) -> Void
-	typealias LoadCompletion = (LoadResultState) -> Void
-
-	func save(_ restaurants: [RestaurantItem], timestamp: Date, completion: @escaping CacheCompletion)
-	func delete(completion: @escaping CacheCompletion)
-	func load(completion: @escaping LoadCompletion)
-}
-
-public extension CacheClient {
-	func load(completion: @escaping LoadCompletion) {}
-	func save(_ restaurants: [RestaurantItem], timestamp: Date, completion: @escaping CacheCompletion) {}
-	func delete(completion: @escaping CacheCompletion) {}
-}
-
 public final class LocalRestaurantLoader {
 	private let cacheClient: CacheClient
 	private let currentDate: () -> Date

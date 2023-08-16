@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA10BF1A2A8D6283002D74F2 /* CacheClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10BF192A8D6283002D74F2 /* CacheClient.swift */; };
 		FA36A8B52A8039BF00912F2B /* URLSessionSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA36A8B42A8039BF00912F2B /* URLSessionSpy.swift */; };
 		FA36A8B72A8039EE00912F2B /* URLSessionDataTaskSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA36A8B62A8039EE00912F2B /* URLSessionDataTaskSpy.swift */; };
 		FA6B21A92A81751800636DC5 /* LocalRestaurantLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B21A82A81751800636DC5 /* LocalRestaurantLoader.swift */; };
@@ -39,6 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FA10BF192A8D6283002D74F2 /* CacheClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheClient.swift; sourceTree = "<group>"; };
 		FA36A8B42A8039BF00912F2B /* URLSessionSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionSpy.swift; sourceTree = "<group>"; };
 		FA36A8B62A8039EE00912F2B /* URLSessionDataTaskSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionDataTaskSpy.swift; sourceTree = "<group>"; };
 		FA6B21A82A81751800636DC5 /* LocalRestaurantLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRestaurantLoader.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				FA6B21A82A81751800636DC5 /* LocalRestaurantLoader.swift */,
+				FA10BF192A8D6283002D74F2 /* CacheClient.swift */,
 				FAF135242A89C11100B4F71C /* CachePolice.swift */,
 			);
 			path = LocalLoader;
@@ -288,6 +291,7 @@
 				FA9FD42B2A718D5E000921BA /* RemoteRestaurantLoader.swift in Sources */,
 				FAF135252A89C11100B4F71C /* CachePolice.swift in Sources */,
 				FADC3CC72A7F165700D16DE2 /* NetworkClient.swift in Sources */,
+				FA10BF1A2A8D6283002D74F2 /* CacheClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

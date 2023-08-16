@@ -2,11 +2,11 @@
 
 import Foundation
 
-struct RestaurantRoot: Decodable {
+struct RestaurantRoot: Codable {
 	let items: [RestaurantItem]
 }
 
-public struct RestaurantItem: Decodable, Equatable {
+public struct RestaurantItem: Codable, Equatable {
 	let id: UUID
 	let name: String
 	let location: String
