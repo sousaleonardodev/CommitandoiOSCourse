@@ -31,6 +31,16 @@ final class CacheServiceTests: XCTestCase {
 		assert(sut, completion: .success(items: secondTimeItems, timestamp: secondTimeTimestamp))
 	}
 
+	func testSaveReturnErrorWithInvalidURL() {
+		let invalidURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+		let sut = CacheService(managerURL: invalidURL)
+		let items = restaurantList()
+
+		let returnedError = insert(sut, items: items, timestamp: Date())
+
+		XCTAssertNotNil(returnedError)
+	}
+
 	private func assert(
 		_ sut: CacheClient,
 		completion result: LoadResultState,
