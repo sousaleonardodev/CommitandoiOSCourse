@@ -36,7 +36,6 @@ final class CacheServiceTests: XCTestCase {
 	}
 
 	func testSaveReturnErrorWithInvalidURL() {
-
 		let sut = makeSUT(managerURL: invalidManagerURL())
 		let items = restaurantList()
 
@@ -87,6 +86,37 @@ final class CacheServiceTests: XCTestCase {
 		let returnedError = delete(sut)
 
 		XCTAssertNotNil(returnedError)
+	}
+
+	func testLoadWithEmptyCache() {
+		let sut = makeSUT()
+
+		assert(sut, completion: .empty)
+	}
+
+	func testLoadWithEmptyCacheCalledTwice() {
+		let sut = makeSUT()
+
+		assert(sut, completion: .empty)
+		assert(sut, completion: .empty)
+	}
+
+	func testLoadWithCache() {
+		let sut = makeSUT()
+		let items = restaurantList()
+		let timestamp = Date()
+
+		insert(sut, items: items, timestamp: timestamp)
+
+		assert(sut, completion: .success(items: items, timestamp: timestamp))
+	}
+
+	func testLoadWithInvalidData() {
+		let sut = makeSUT()
+		let error = NSError(domain: "load test", code: -1)
+
+		try? "invalidData".write(to: validManagerURL(), atomically: false, encoding: .utf8)
+		assert(sut, completion: .failure(error: error))
 	}
 
 	private func assert(
