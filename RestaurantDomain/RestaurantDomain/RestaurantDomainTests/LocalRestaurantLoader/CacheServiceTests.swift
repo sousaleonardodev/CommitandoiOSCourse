@@ -36,8 +36,8 @@ final class CacheServiceTests: XCTestCase {
 	}
 
 	func testSaveReturnErrorWithInvalidURL() {
-		let invalidURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let sut = makeSUT(managerURL: invalidURL)
+
+		let sut = makeSUT(managerURL: invalidManagerURL())
 		let items = restaurantList()
 
 		let returnedError = insert(sut, items: items, timestamp: Date())
@@ -50,7 +50,7 @@ final class CacheServiceTests: XCTestCase {
 
 		assert(sut, completion: .empty)
 
-		var returnedError: Error? = delete(sut)
+		let returnedError: Error? = delete(sut)
 
 		XCTAssertNil(returnedError)
 		assert(sut, completion: .empty)
@@ -79,6 +79,14 @@ final class CacheServiceTests: XCTestCase {
 		delete(sut)
 
 		assert(sut, completion: .empty)
+	}
+
+	func testDeleteWithInvalidURL() {
+		let sut = makeSUT(managerURL: invalidManagerURL())
+
+		let returnedError = delete(sut)
+
+		XCTAssertNotNil(returnedError)
 	}
 
 	private func assert(
@@ -111,6 +119,10 @@ final class CacheServiceTests: XCTestCase {
 		let path = type(of: self)
 
 		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appending(path: "\(path)")
+	}
+
+	private func invalidManagerURL() -> URL {
+		FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 	}
 
 	private func makeSUT(managerURL: URL? = nil) -> CacheClient {
