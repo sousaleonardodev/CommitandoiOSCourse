@@ -45,7 +45,7 @@ final class RestaurantUITests: XCTestCase {
 	func testLoadUsingRefreshControl() {
 		let (sut, service) = makeSUT()
 
-		sut.refreshControl?.simulatePullToRefresh()
+		sut.simulatePullToRefresh()
 
 		XCTAssertEqual(service.loadCount, 2)
 		XCTAssertEqual(sut.restaurants.count, 0)
@@ -56,7 +56,7 @@ final class RestaurantUITests: XCTestCase {
 
 		sut.loadViewIfNeeded()
 
-		XCTAssertTrue(sut.refreshControl?.isRefreshing ?? false)
+		XCTAssertTrue(sut.isShowingLoadingIndicator())
 	}
 
 	func testLoadFinishedFailure() {
@@ -65,7 +65,7 @@ final class RestaurantUITests: XCTestCase {
 		sut.loadViewIfNeeded()
 		service.completionResult(.failure(.connectivity))
 
-		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+		XCTAssertFalse(sut.isShowingLoadingIndicator())
 	}
 
 	func testLoadFinishedSuccess() {
@@ -74,33 +74,33 @@ final class RestaurantUITests: XCTestCase {
 		sut.loadViewIfNeeded()
 		service.completionResult(.success(restaurantList()))
 
-		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+		XCTAssertFalse(sut.isShowingLoadingIndicator())
 	}
 
 	func testPullToRefreshWithLoadingIndicator() {
 		let (sut, _) = makeSUT()
 
-		sut.refreshControl?.simulatePullToRefresh()
+		sut.simulatePullToRefresh()
 
-		XCTAssertTrue(sut.refreshControl?.isRefreshing ?? false)
+		XCTAssertTrue(sut.isShowingLoadingIndicator())
 	}
 
 	func testPullToRefreshFailureLoadingIndicator() {
 		let (sut, service) = makeSUT()
 
-		sut.refreshControl?.simulatePullToRefresh()
+		sut.simulatePullToRefresh()
 		service.completionResult(.failure(.connectivity))
 
-		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+		XCTAssertFalse(sut.isShowingLoadingIndicator())
 	}
 
 	func testPullToRefreshSuccessLoadingIndicator() {
 		let (sut, service) = makeSUT()
 
-		sut.refreshControl?.simulatePullToRefresh()
+		sut.simulatePullToRefresh()
 		service.completionResult(.success(restaurantList()))
 
-		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+		XCTAssertFalse(sut.isShowingLoadingIndicator())
 	}
 
 	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: RestaurantListViewController, service: RestaurantLoaderSpy) {
@@ -128,12 +128,22 @@ final class RestaurantLoaderSpy: RestaurantLoader {
 	}
 }
 
-extension UIRefreshControl {
+private extension UIRefreshControl {
 	func simulatePullToRefresh() {
 		allTargets.forEach { target in
 			actions(forTarget: target, forControlEvent: .valueChanged)?.forEach {
 				(target as NSObject).perform(Selector($0))
 			}
 		}
+	}
+}
+
+private extension RestaurantListViewController {
+	func simulatePullToRefresh() {
+		refreshControl?.simulatePullToRefresh()
+	}
+
+	func isShowingLoadingIndicator() -> Bool {
+		refreshControl?.isRefreshing ?? false
 	}
 }
