@@ -17,6 +17,7 @@
 		FA59C7AC2AA552FE007713E9 /* RestaurantDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9FD4102A718A87000921BA /* RestaurantDomain.framework */; };
 		FA59C7AD2AA552FE007713E9 /* RestaurantDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA9FD4102A718A87000921BA /* RestaurantDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FA59C7B22AA55404007713E9 /* RestaurantListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA59C7B12AA55404007713E9 /* RestaurantListViewController.swift */; };
+		FA59C7B32AA55786007713E9 /* XCTestCase+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */; };
 		FA6B21A92A81751800636DC5 /* LocalRestaurantLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B21A82A81751800636DC5 /* LocalRestaurantLoader.swift */; };
 		FA6B21AC2A8177DF00636DC5 /* LocalRestaurantLoaderSavingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B21AB2A8177DF00636DC5 /* LocalRestaurantLoaderSavingTests.swift */; };
 		FA7EA66E2A802D5400C531EC /* XCTestCase+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7EA66D2A802D5400C531EC /* XCTestCase+Extensions.swift */; };
@@ -448,6 +449,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA59C7B32AA55786007713E9 /* XCTestCase+Extensions.swift in Sources */,
 				FA59C7A32AA552CC007713E9 /* RestaurantUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

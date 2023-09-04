@@ -15,10 +15,10 @@ final class RestaurantListViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		service?.load{ result in
+		service?.load{ [weak self] result in
 			switch result {
 			case let .success(restaurants):
-				self.restaurants = restaurants
+				self?.restaurants = restaurants
 			case let .failure(error):
 				dump(error)
 			}
