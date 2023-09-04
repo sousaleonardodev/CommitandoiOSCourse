@@ -4,7 +4,7 @@ import Foundation
 import RestaurantDomain
 import UIKit
 
-final class RestaurantListViewController: UIViewController {
+final class RestaurantListViewController: UITableViewController {
 	private var service: RestaurantLoader?
 	private(set) var restaurants: [RestaurantItem] = []
 
@@ -15,6 +15,19 @@ final class RestaurantListViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		setupRefreshControll()
+
+		load()
+	}
+
+	private func setupRefreshControll() {
+		refreshControl = UIRefreshControl()
+		refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+		refreshControl?.beginRefreshing()
+	}
+
+	@objc
+	private func load() {
 		service?.load{ [weak self] result in
 			switch result {
 			case let .success(restaurants):
@@ -22,6 +35,7 @@ final class RestaurantListViewController: UIViewController {
 			case let .failure(error):
 				dump(error)
 			}
+			self?.refreshControl?.endRefreshing()
 		}
 	}
 }

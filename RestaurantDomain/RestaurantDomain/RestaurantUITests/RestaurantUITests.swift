@@ -26,7 +26,7 @@ final class RestaurantUITests: XCTestCase {
 		let (sut, service) = makeSUT()
 
 		sut.loadViewIfNeeded()
-		service.completionSuccess(.success(restaurantList()))
+		service.completionResult(.success(restaurantList()))
 
 		XCTAssertEqual(service.loadCount, 1)
 		XCTAssertEqual(sut.restaurants.count, 4)
@@ -36,10 +36,71 @@ final class RestaurantUITests: XCTestCase {
 		let (sut, service) = makeSUT()
 
 		sut.loadViewIfNeeded()
-		service.completionSuccess(.failure(.connectivity))
+		service.completionResult(.failure(.connectivity))
 
 		XCTAssertEqual(service.loadCount, 1)
 		XCTAssertEqual(sut.restaurants.count, 0)
+	}
+
+	func testLoadUsingRefreshControl() {
+		let (sut, service) = makeSUT()
+
+		sut.refreshControl?.simulatePullToRefresh()
+
+		XCTAssertEqual(service.loadCount, 2)
+		XCTAssertEqual(sut.restaurants.count, 0)
+	}
+
+	func testViewDidLoadWithLoadingIndicator() {
+		let (sut, _) = makeSUT()
+
+		sut.loadViewIfNeeded()
+
+		XCTAssertTrue(sut.refreshControl?.isRefreshing ?? false)
+	}
+
+	func testLoadFinishedFailure() {
+		let (sut, service) = makeSUT()
+
+		sut.loadViewIfNeeded()
+		service.completionResult(.failure(.connectivity))
+
+		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+	}
+
+	func testLoadFinishedSuccess() {
+		let (sut, service) = makeSUT()
+
+		sut.loadViewIfNeeded()
+		service.completionResult(.success(restaurantList()))
+
+		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+	}
+
+	func testPullToRefreshWithLoadingIndicator() {
+		let (sut, _) = makeSUT()
+
+		sut.refreshControl?.simulatePullToRefresh()
+
+		XCTAssertTrue(sut.refreshControl?.isRefreshing ?? false)
+	}
+
+	func testPullToRefreshFailureLoadingIndicator() {
+		let (sut, service) = makeSUT()
+
+		sut.refreshControl?.simulatePullToRefresh()
+		service.completionResult(.failure(.connectivity))
+
+		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
+	}
+
+	func testPullToRefreshSuccessLoadingIndicator() {
+		let (sut, service) = makeSUT()
+
+		sut.refreshControl?.simulatePullToRefresh()
+		service.completionResult(.success(restaurantList()))
+
+		XCTAssertFalse(sut.refreshControl?.isRefreshing ?? true)
 	}
 
 	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: RestaurantListViewController, service: RestaurantLoaderSpy) {
@@ -56,13 +117,23 @@ final class RestaurantUITests: XCTestCase {
 final class RestaurantLoaderSpy: RestaurantLoader {
 
 	private(set) var loadCount = 0
-	private(set) var successCompletionHandler: ((RestaurantResult) -> Void)?
+	private(set) var completionHandler: ((RestaurantResult) -> Void)?
 	func load(completion: @escaping (RestaurantResult) -> Void) {
 		loadCount += 1
-		successCompletionHandler = completion
+		completionHandler = completion
 	}
 
-	func completionSuccess(_ result: RestaurantResult) {
-		successCompletionHandler?(result)
+	func completionResult(_ result: RestaurantResult) {
+		completionHandler?(result)
+	}
+}
+
+extension UIRefreshControl {
+	func simulatePullToRefresh() {
+		allTargets.forEach { target in
+			actions(forTarget: target, forControlEvent: .valueChanged)?.forEach {
+				(target as NSObject).perform(Selector($0))
+			}
+		}
 	}
 }
