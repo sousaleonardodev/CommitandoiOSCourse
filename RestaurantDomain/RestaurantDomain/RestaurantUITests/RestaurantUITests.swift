@@ -10,7 +10,7 @@ final class RestaurantUITests: XCTestCase {
 		let (sut, service) = makeSUT()
 
 		XCTAssertEqual(sut.restaurants.count, 0)
-		XCTAssertEqual(service.loadCount, 0)
+		XCTAssertTrue(service.calledMethod.isEmpty)
 	}
 
 	func testViewControllerDidCalledLoad() {
@@ -19,7 +19,7 @@ final class RestaurantUITests: XCTestCase {
 		sut.loadViewIfNeeded()
 
 		XCTAssertEqual(sut.restaurants.count, 0)
-		XCTAssertEqual(service.loadCount, 1)
+		XCTAssertEqual(service.calledMethod, [.load])
 	}
 
 	func testLoadWithReturnedData() {
@@ -28,7 +28,7 @@ final class RestaurantUITests: XCTestCase {
 		sut.loadViewIfNeeded()
 		service.completionResult(.success(restaurantList()))
 
-		XCTAssertEqual(service.loadCount, 1)
+		XCTAssertEqual(service.calledMethod, [.load])
 		XCTAssertEqual(sut.restaurants.count, 4)
 	}
 
@@ -38,7 +38,7 @@ final class RestaurantUITests: XCTestCase {
 		sut.loadViewIfNeeded()
 		service.completionResult(.failure(.connectivity))
 
-		XCTAssertEqual(service.loadCount, 1)
+		XCTAssertEqual(service.calledMethod, [.load])
 		XCTAssertEqual(sut.restaurants.count, 0)
 	}
 
@@ -47,7 +47,7 @@ final class RestaurantUITests: XCTestCase {
 
 		sut.simulatePullToRefresh()
 
-		XCTAssertEqual(service.loadCount, 2)
+		XCTAssertEqual(service.calledMethod, [.load, .load])
 		XCTAssertEqual(sut.restaurants.count, 0)
 	}
 
@@ -115,11 +115,15 @@ final class RestaurantUITests: XCTestCase {
 }
 
 final class RestaurantLoaderSpy: RestaurantLoader {
+	enum Methods {
+		case load
+	}
 
-	private(set) var loadCount = 0
+	private(set) var calledMethod: [Methods] = []
+
 	private(set) var completionHandler: ((RestaurantResult) -> Void)?
 	func load(completion: @escaping (RestaurantResult) -> Void) {
-		loadCount += 1
+		calledMethod.append(.load)
 		completionHandler = completion
 	}
 
