@@ -32,6 +32,16 @@ final class RestaurantUITests: XCTestCase {
 		XCTAssertEqual(sut.restaurants.count, 4)
 	}
 
+	func testLoadWithError() {
+		let (sut, service) = makeSUT()
+
+		sut.loadViewIfNeeded()
+		service.completionSuccess(.failure(.connectivity))
+
+		XCTAssertEqual(service.loadCount, 1)
+		XCTAssertEqual(sut.restaurants.count, 0)
+	}
+
 	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: RestaurantListViewController, service: RestaurantLoaderSpy) {
 		let service = RestaurantLoaderSpy()
 		let sut = RestaurantListViewController(service: service)
