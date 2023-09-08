@@ -23,11 +23,12 @@ final class RestaurantListViewController: UITableViewController {
 	private func setupRefreshControll() {
 		refreshControl = UIRefreshControl()
 		refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
-		refreshControl?.beginRefreshing()
 	}
 
 	@objc
 	private func load() {
+		refreshControl?.beginRefreshing()
+		
 		service?.load{ [weak self] result in
 			switch result {
 			case let .success(restaurants):
