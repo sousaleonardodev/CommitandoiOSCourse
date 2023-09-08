@@ -9,7 +9,7 @@ final class RestaurantUITests: XCTestCase {
 	func testInitDoesntLoad() {
 		let (sut, service) = makeSUT()
 
-		XCTAssertEqual(sut.restaurants.count, 0)
+		XCTAssertEqual(sut.restaurantCollection.count, 0)
 		XCTAssertTrue(service.calledMethod.isEmpty)
 	}
 
@@ -18,7 +18,7 @@ final class RestaurantUITests: XCTestCase {
 
 		sut.loadViewIfNeeded()
 
-		XCTAssertEqual(sut.restaurants.count, 0)
+		XCTAssertEqual(sut.restaurantCollection.count, 0)
 		XCTAssertEqual(service.calledMethod, [.load])
 	}
 
@@ -29,7 +29,7 @@ final class RestaurantUITests: XCTestCase {
 		service.completionResult(.success(restaurantList()))
 
 		XCTAssertEqual(service.calledMethod, [.load])
-		XCTAssertEqual(sut.restaurants.count, 4)
+		XCTAssertEqual(sut.restaurantCollection.count, 4)
 	}
 
 	func testLoadWithError() {
@@ -39,7 +39,7 @@ final class RestaurantUITests: XCTestCase {
 		service.completionResult(.failure(.connectivity))
 
 		XCTAssertEqual(service.calledMethod, [.load])
-		XCTAssertEqual(sut.restaurants.count, 0)
+		XCTAssertEqual(sut.restaurantCollection.count, 0)
 	}
 
 	func testLoadUsingRefreshControl() {
@@ -48,7 +48,7 @@ final class RestaurantUITests: XCTestCase {
 		sut.simulatePullToRefresh()
 
 		XCTAssertEqual(service.calledMethod, [.load, .load])
-		XCTAssertEqual(sut.restaurants.count, 0)
+		XCTAssertEqual(sut.restaurantCollection.count, 0)
 	}
 
 	func testViewDidLoadWithLoadingIndicator() {
@@ -136,7 +136,7 @@ final class RestaurantUITests: XCTestCase {
 
 	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: RestaurantListViewController, service: RestaurantLoaderSpy) {
 		let service = RestaurantLoaderSpy()
-		let sut = RestaurantListViewController(service: service)
+		let sut = RestaurantListCompose.compose(service: service)
 
 		trackForMemoryLeaks(sut, file: file, line: line)
 		trackForMemoryLeaks(service, file: file, line: line)
