@@ -7,12 +7,12 @@ struct RestaurantRoot: Codable {
 }
 
 public struct RestaurantItem: Codable, Equatable {
-	let id: UUID
-	let name: String
-	let location: String
-	let distance: Float
-	let ratings: Int
-	let parasols: Int
+	public let id: UUID
+	public let name: String
+	public let location: String
+	public let distance: Float
+	public let ratings: Int
+	public let parasols: Int
 
 	public init(id: UUID, name: String, location: String, distance: Float, ratings: Int, parasols: Int) {
 		self.id = id

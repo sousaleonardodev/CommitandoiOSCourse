@@ -118,6 +118,22 @@ final class RestaurantUITests: XCTestCase {
 		XCTAssertFalse(sut.isShowingLoadingIndicator())
 	}
 
+	func testRenderAllRestaurantsItemCells() {
+		let (sut, service) = makeSUT()
+
+		sut.loadViewIfNeeded()
+		service.completionResult(.success(restaurantList()))
+
+		XCTAssertEqual(sut.numberOfRows(), 4)
+
+		let cell = sut.tableView(sut.tableView, cellForRowAt: .init(row: 0, section: 1)) as? RestaurantItemCell
+
+		XCTAssertNotNil(cell)
+		XCTAssertEqual(cell?.title.text ?? "", "name")
+		XCTAssertEqual(cell?.parasols.text ?? "", "Guarda-sois: 11")
+		XCTAssertEqual(cell?.distance.text ?? "", "Distância: 1.0")
+	}
+
 	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: RestaurantListViewController, service: RestaurantLoaderSpy) {
 		let service = RestaurantLoaderSpy()
 		let sut = RestaurantListViewController(service: service)
@@ -164,5 +180,9 @@ private extension RestaurantListViewController {
 
 	func isShowingLoadingIndicator() -> Bool {
 		refreshControl?.isRefreshing ?? false
+	}
+
+	func numberOfRows(in section: Int = 0) -> Int {
+		tableView(tableView, numberOfRowsInSection: section)
 	}
 }
