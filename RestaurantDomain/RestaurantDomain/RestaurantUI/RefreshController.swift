@@ -9,27 +9,35 @@ final class RefreshController: NSObject {
 		let control = UIRefreshControl()
 
 		control.addTarget(self, action: #selector(refresh), for: .valueChanged)
+		viewModel.onLoadingState = { isLoading in
+
+		}
 		return control
 	}()
 
-	private let service: RestaurantLoader
-	init(service: RestaurantLoader) {
-		self.service = service
+	private let viewModel: RestaurantListViewModel
+	init(viewModel: RestaurantListViewModel) {
+		self.viewModel = viewModel
 	}
 
 	var onRefresh: (([RestaurantItem]) -> Void)?
 
 	@objc
 	func refresh() {
-		view.beginRefreshing()
-		service.load { [weak self] result in
-			switch result {
-			case let .success(items):
-				self?.onRefresh?(items)
-			default:
-				break
+		viewModel.loadService()
+	}
+
+	private func setupRefreshControl() -> UIRefreshControl {
+		let refreshControl = UIRefreshControl()
+		refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+		
+		viewModel.onLoadingState = { [weak self] isLoading in
+			guard isLoading else {
+				self?.view.endRefreshing()
+				return
 			}
-			self?.view.endRefreshing()
+			self?.view.beginRefreshing()
 		}
+		return refreshControl
 	}
 }

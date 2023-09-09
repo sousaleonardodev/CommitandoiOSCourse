@@ -3,7 +3,7 @@
 import Foundation
 import RestaurantDomain
 
-final class RestaurantListviewModel {
+final class RestaurantListViewModel {
 	private let service: RestaurantLoader
 
 	var onLoadingState: ((Bool) -> Void)?
