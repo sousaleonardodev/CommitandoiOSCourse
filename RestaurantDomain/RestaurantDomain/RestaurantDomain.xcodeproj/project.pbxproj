@@ -26,6 +26,7 @@
 		FA9FD4202A718A87000921BA /* RestaurantDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */; };
 		FA9FD4212A718A87000921BA /* RestaurantDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = FA9FD4132A718A87000921BA /* RestaurantDomain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA9FD42B2A718D5E000921BA /* RemoteRestaurantLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9FD42A2A718D5E000921BA /* RemoteRestaurantLoader.swift */; };
+		FAA39B072AAD132600D4B8DB /* RestaurantListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA39B062AAD132600D4B8DB /* RestaurantListViewModel.swift */; };
 		FAA92DB32AABC1C5009BDFB1 /* RefreshController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA92DB22AABC1C5009BDFB1 /* RefreshController.swift */; };
 		FAA92DB52AABC38D009BDFB1 /* RestaurantItemCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA92DB42AABC38D009BDFB1 /* RestaurantItemCellController.swift */; };
 		FAA92DB72AABC582009BDFB1 /* RestaurantItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA92DB62AABC582009BDFB1 /* RestaurantItemCell.swift */; };
@@ -99,6 +100,7 @@
 		FA9FD41F2A718A87000921BA /* RestaurantDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDomainTests.swift; sourceTree = "<group>"; };
 		FA9FD42A2A718D5E000921BA /* RemoteRestaurantLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRestaurantLoader.swift; sourceTree = "<group>"; };
 		FAA003642A78669F004D2911 /* RestaurantDomain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = RestaurantDomain.xctestplan; sourceTree = SOURCE_ROOT; };
+		FAA39B062AAD132600D4B8DB /* RestaurantListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantListViewModel.swift; sourceTree = "<group>"; };
 		FAA92DB22AABC1C5009BDFB1 /* RefreshController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshController.swift; sourceTree = "<group>"; };
 		FAA92DB42AABC38D009BDFB1 /* RestaurantItemCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantItemCellController.swift; sourceTree = "<group>"; };
 		FAA92DB62AABC582009BDFB1 /* RestaurantItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantItemCell.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				FAA92DB62AABC582009BDFB1 /* RestaurantItemCell.swift */,
 				FAA92DB22AABC1C5009BDFB1 /* RefreshController.swift */,
 				FAA92DB42AABC38D009BDFB1 /* RestaurantItemCellController.swift */,
+				FAA39B062AAD132600D4B8DB /* RestaurantListViewModel.swift */,
 			);
 			path = RestaurantUI;
 			sourceTree = "<group>";
@@ -454,6 +457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAA92DB92AABC695009BDFB1 /* RestaurantListCompose.swift in Sources */,
+				FAA39B072AAD132600D4B8DB /* RestaurantListViewModel.swift in Sources */,
 				FAA92DB52AABC38D009BDFB1 /* RestaurantItemCellController.swift in Sources */,
 				FA59C7B22AA55404007713E9 /* RestaurantListViewController.swift in Sources */,
 				FAA92DB32AABC1C5009BDFB1 /* RefreshController.swift in Sources */,
