@@ -16,13 +16,14 @@ final class RestaurantListViewModel {
 	func loadService() {
 		onLoadingState?(true)
 		service.load { [weak self] result in
+			self?.onLoadingState?(false)
+			
 			switch result {
 			case let .success(items):
 				self?.onRestaurantItem?(items)
 			case let .failure(error):
 				break
 			}
-			self?.onLoadingState?(false)
 		}
 	}
 }

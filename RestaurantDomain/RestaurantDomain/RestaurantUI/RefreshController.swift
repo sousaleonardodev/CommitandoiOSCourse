@@ -5,22 +5,12 @@ import UIKit
 import RestaurantDomain
 
 final class RefreshController: NSObject {
-	private(set) lazy var view: UIRefreshControl = {
-		let control = UIRefreshControl()
-
-		control.addTarget(self, action: #selector(refresh), for: .valueChanged)
-		viewModel.onLoadingState = { isLoading in
-
-		}
-		return control
-	}()
+	private(set) lazy var view: UIRefreshControl = setupRefreshControl()
 
 	private let viewModel: RestaurantListViewModel
 	init(viewModel: RestaurantListViewModel) {
 		self.viewModel = viewModel
 	}
-
-	var onRefresh: (([RestaurantItem]) -> Void)?
 
 	@objc
 	func refresh() {
