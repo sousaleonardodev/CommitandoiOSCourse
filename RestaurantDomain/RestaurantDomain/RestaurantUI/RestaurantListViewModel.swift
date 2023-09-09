@@ -4,10 +4,12 @@ import Foundation
 import RestaurantDomain
 
 final class RestaurantListViewModel {
+	typealias Observer<T> = (T) -> Void
+
 	private let service: RestaurantLoader
 
-	var onLoadingState: ((Bool) -> Void)?
-	var onRestaurantItem: (([RestaurantItem]) -> Void)?
+	var onLoadingState: Observer<Bool>?
+	var onRestaurantItem: Observer<[RestaurantItem]>?
 
 	init(service: RestaurantLoader) {
 		self.service = service
@@ -17,7 +19,7 @@ final class RestaurantListViewModel {
 		onLoadingState?(true)
 		service.load { [weak self] result in
 			self?.onLoadingState?(false)
-			
+
 			switch result {
 			case let .success(items):
 				self?.onRestaurantItem?(items)
