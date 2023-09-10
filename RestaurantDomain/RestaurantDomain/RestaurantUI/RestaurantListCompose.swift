@@ -5,20 +5,12 @@ import RestaurantDomain
 
 final class RestaurantListCompose {
 	static func compose(service: RestaurantLoader) -> RestaurantListViewController {
-		let viewModel = RestaurantListViewModel(service: service)
-		let refreshController = RefreshController(viewModel: viewModel)
-		let controller = RestaurantListViewController(refreshController: refreshController)
+		let presenter = RestaurantListPresenter()
+		let interactor = RestaurantListInteractor(service: service, presenter: presenter)
+		let controller = RestaurantListViewController(interactor: interactor)
 
-		viewModel.onRestaurantItem = adaptRestaurantItemToCellController(controller: controller)
+		presenter.view = controller
 
 		return controller
-	}
-
-	static func adaptRestaurantItemToCellController(controller: RestaurantListViewController)  -> ([RestaurantItem]) -> Void {
-		return { [weak controller] items in
-			controller?.restaurantCollection = items.map { item in
-				RestaurantItemCellController(viewModel: item)
-			}
-		}
 	}
 }
